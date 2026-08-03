@@ -1,0 +1,15 @@
+# Rendered at container start via chirpstack-udp-forwarder's native VAR
+# substitution. Every placeholder is exported by entrypoint.sh. The UPSTREAMS
+# placeholder below expands to one [[udp_forwarder.servers]] block per enabled
+# UDP_SERVER_*_n slot. (Placeholder names must never appear in comments —
+# substitution does not know about comments.)
+
+[udp_forwarder]
+  log_level = "$UDP_LOG_LEVEL"
+  log_to_syslog = false
+  metrics_bind = "$UDP_METRICS_BIND"
+$UDP_UPSTREAMS_TOML
+
+[concentratord]
+  event_url = "tcp://concentratord:3001"
+  command_url = "tcp://concentratord:3002"

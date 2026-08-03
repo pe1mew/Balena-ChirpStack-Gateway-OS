@@ -1,0 +1,34 @@
+# Rendered at container start via chirpstack-gateway-mesh's native $VAR
+# substitution. Every placeholder is exported by entrypoint.sh. This file is
+# concatenated with the region mapping file selected by MESH_REGION.
+
+[logging]
+  level = "$MESH_LOG_LEVEL"
+  log_to_syslog = false
+
+[mesh]
+  root_key = "$MESH_ROOT_KEY"
+  border_gateway = $MESH_BORDER_GATEWAY
+  border_gateway_ignore_direct_uplinks = $MESH_IGNORE_DIRECT_UPLINKS
+  max_hop_count = $MESH_MAX_HOP_COUNT
+  frequencies = $MESH_FREQS_TOML
+  tx_power = $MESH_TX_POWER
+$MESH_RELAY_LINE
+
+  [mesh.data_rate]
+    modulation = "$MESH_DATA_RATE_MODULATION"
+    spreading_factor = $MESH_DATA_RATE_SF
+    bandwidth = $MESH_DATA_RATE_BANDWIDTH
+    code_rate = "$MESH_DATA_RATE_CODE_RATE"
+
+  [mesh.proxy_api]
+    event_bind = "tcp://0.0.0.0:3011"
+    command_bind = "tcp://0.0.0.0:3012"
+
+[backend.concentratord]
+  event_url = "tcp://concentratord:3001"
+  command_url = "tcp://concentratord:3002"
+
+[backend.mesh_concentratord]
+  event_url = "tcp://concentratord:3001"
+  command_url = "tcp://concentratord:3002"

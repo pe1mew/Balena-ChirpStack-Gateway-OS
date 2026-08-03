@@ -1,0 +1,35 @@
+# ChirpStack Gateway Mesh service image.
+#
+# Binary from the upstream release artifact, pinned by version + SHA-256
+# (design decision D8). Default checksum is for the armv7hf artifact; override
+# ARTIFACT_ARCH and SHA256_MESH together for another architecture.
+
+FROM alpine:3.20 AS fetch
+
+ARG MESH_VERSION=4.1.3
+ARG ARTIFACT_ARCH=armv7hf
+ARG BASE_URL=https://artifacts.chirpstack.io/downloads/chirpstack-gateway-mesh
+ARG SHA256_MESH=46b2def8f457c12352120efe05e4b05264d665dcafb2ee2edb175d0c9ca46ec5
+
+WORKDIR /fetch
+RUN mkdir -p /out \
+ && wget -q -O mesh.tar.gz \
+      "${BASE_URL}/chirpstack-gateway-mesh_${MESH_VERSION}_linux_${ARTIFACT_ARCH}.tar.gz" \
+ && echo "${SHA256_MESH}  mesh.tar.gz" | sha256sum -c \
+ && tar -xzf mesh.tar.gz -C /out \
+ && chmod +x /out/*
+
+FROM balenalib/%%BALENA_MACHINE_NAME%%-debian:bookworm-run
+
+ENV UDEV=off
+
+COPY --from=fetch /out/chirpstack-gateway-mesh /usr/bin/chirpstack-gateway-mesh
+
+# Region mapping example configs from the submodule (static files).
+COPY chirpstack-gateway-mesh/configuration/ /etc/chirpstack-gateway-mesh/examples/
+
+COPY gateway-mesh/templates/ /opt/app/templates/
+COPY gateway-mesh/entrypoint.sh /opt/app/entrypoint.sh
+RUN chmod +x /opt/app/entrypoint.sh
+
+CMD ["/opt/app/entrypoint.sh"]

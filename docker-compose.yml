@@ -19,3 +19,37 @@ services:
     restart: always
     depends_on:
       - concentratord
+
+  # Optional services (design D3): idle unless their *_ENABLED variable is
+  # set to "true".
+
+  udp-forwarder:
+    build:
+      context: .
+      dockerfile: udp-forwarder/Dockerfile.template
+    restart: always
+    depends_on:
+      - concentratord
+
+  gateway-mesh:
+    build:
+      context: .
+      dockerfile: gateway-mesh/Dockerfile.template
+    restart: always
+    depends_on:
+      - concentratord
+
+  helium-gateway:
+    build:
+      context: .
+      dockerfile: helium-gateway/Dockerfile.template
+    restart: always
+    devices:
+      # ECC608 secure element on converted hotspots (design D7).
+      - "/dev/i2c-1:/dev/i2c-1"
+    volumes:
+      # Persists the file-based keypair fallback (D7 priorities 2 and 3).
+      - helium-data:/data/helium
+
+volumes:
+  helium-data:

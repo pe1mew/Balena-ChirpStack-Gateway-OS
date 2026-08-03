@@ -1,0 +1,30 @@
+# ChirpStack UDP Forwarder service image.
+#
+# Exception to design decision D8: upstream publishes NO binary artifacts for
+# chirpstack-udp-forwarder (empty artifacts.chirpstack.io directory; even
+# ChirpStack Gateway OS compiles it from source). This service therefore
+# builds from the pinned submodule — the documented Appendix A fallback.
+# Layer caching keeps rebuilds cheap as long as the submodule is unchanged.
+
+FROM rust:1.89-slim-bookworm AS build
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      protobuf-compiler libprotobuf-dev libzmq3-dev pkg-config make g++ \
+ && rm -rf /var/lib/apt/lists/*
+
+COPY chirpstack-udp-forwarder /src
+WORKDIR /src
+RUN cargo build --release
+
+FROM balenalib/%%BALENA_MACHINE_NAME%%-debian:bookworm-run
+
+ENV UDEV=off
+
+RUN install_packages libzmq5
+
+COPY --from=build /src/target/release/chirpstack-udp-forwarder /usr/bin/chirpstack-udp-forwarder
+COPY udp-forwarder/templates/ /opt/app/templates/
+COPY udp-forwarder/entrypoint.sh /opt/app/entrypoint.sh
+RUN chmod +x /opt/app/entrypoint.sh
+
+CMD ["/opt/app/entrypoint.sh"]

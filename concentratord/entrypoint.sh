@@ -42,6 +42,11 @@ export CONC_REGION=$(echo "$REGION_BASE" | tr 'a-z' 'A-Z')
 
 # ---- gateway ID precedence (section 5.1) ------------------------------------
 # explicit GATEWAY_ID > chip EUI (sx1302/2g4: empty string) > MAC-derived (sx1301)
+# Sanitize pasted values: strip whitespace/colons, lowercase, validate format.
+GATEWAY_ID=$(printf '%s' "${GATEWAY_ID:-}" | tr -d '[:space:]:' | tr 'A-F' 'a-f')
+if [ -n "$GATEWAY_ID" ] && ! printf '%s' "$GATEWAY_ID" | grep -Eq '^[0-9a-f]{16}$'; then
+  die "GATEWAY_ID must be exactly 16 hex characters (got: '$GATEWAY_ID')"
+fi
 if [ -z "${GATEWAY_ID:-}" ] && [ "$CONC_CHIPSET" = "sx1301" ]; then
   # SX1301 has no chip EUI: derive xxxxxxFFFExxxxxx from the host MAC via the
   # supervisor API (the container's own MAC is a bridge address).
@@ -88,7 +93,7 @@ fi
 export CONC_OPTIONAL_LINES="$OPT"
 
 # ---- start ------------------------------------------------------------------
-log "chipset=$CONC_CHIPSET model=$CONC_MODEL flags=$CONC_MODEL_FLAGS_TOML plan=$PLAN region=$CONC_REGION"
+log "chipset=$CONC_CHIPSET model=$CONC_MODEL flags=$CONC_FLAGS_TOML plan=$PLAN region=$CONC_REGION"
 log "gateway_id=${GATEWAY_ID:-<chip EUI>}"
 log "config: templates/concentratord.toml + $(basename "$REGION_FILE") + $(basename "$CHANNELS_FILE")"
 exec "$BIN" \

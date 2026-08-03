@@ -1,11 +1,21 @@
-# Whitelist: the build context only needs the service directories and the
-# static config examples from the concentratord submodule. Everything else
-# (especially the chirpstack-gateway-os/openwrt tree) must stay out of the
-# upload to the balena builders.
+# Whitelist: the build context only needs the service directories, the static
+# config examples from the concentratord and gateway-mesh submodules, and the
+# udp-forwarder source (built from the submodule — see its Dockerfile).
+# Everything else (especially the chirpstack-gateway-os/openwrt tree) must
+# stay out of the upload to the balena builders.
 *
 !docker-compose.yml
 !concentratord
 !mqtt-forwarder
+!udp-forwarder
+!gateway-mesh
+!helium-gateway
 !chirpstack-concentratord
+!chirpstack-gateway-mesh
+!chirpstack-udp-forwarder
 chirpstack-concentratord/.git
 chirpstack-concentratord/target
+chirpstack-gateway-mesh/.git
+chirpstack-gateway-mesh/target
+chirpstack-udp-forwarder/.git
+chirpstack-udp-forwarder/target

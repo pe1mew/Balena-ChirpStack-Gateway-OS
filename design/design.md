@@ -207,6 +207,9 @@ may stop being maintained, its release artifact (and optionally the others)
 is **mirrored as a release asset of this repository**, and the Dockerfile ARG
 allows switching the download base URL to the mirror. Rationale and
 alternatives in Appendix A.
+*Exception:* chirpstack-udp-forwarder — upstream publishes **no** binary
+artifacts at all (empty artifacts directory; Gateway OS also compiles it), so
+that one service builds from its pinned submodule (the Appendix A fallback).
 
 ---
 
