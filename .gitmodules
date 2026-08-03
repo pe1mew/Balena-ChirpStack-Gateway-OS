@@ -1,0 +1,12 @@
+[submodule "ttn-resin-gateway-rpi"]
+	path = ttn-resin-gateway-rpi
+	url = https://github.com/pe1mew/ttn-resin-gateway-rpi.git
+[submodule "chirpstack-gateway-os"]
+	path = chirpstack-gateway-os
+	url = https://github.com/chirpstack/chirpstack-gateway-os.git
+[submodule "chirpstack-mqtt-forwarder"]
+	path = chirpstack-mqtt-forwarder
+	url = https://github.com/chirpstack/chirpstack-mqtt-forwarder.git
+[submodule "chirpstack-gateway-mesh"]
+	path = chirpstack-gateway-mesh
+	url = https://github.com/chirpstack/chirpstack-gateway-mesh.git
