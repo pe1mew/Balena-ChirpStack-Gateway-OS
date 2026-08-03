@@ -76,6 +76,25 @@ clearly:
   binaries.
 - **RAKwireless** and **Seeed Studio** for well-documented gateway hardware.
 
+## About this project: AI-assisted development
+
+This project was made exclusively with the help of **Claude** (Anthropic),
+under my supervision. The goal is to practice and experiment with
+programming, leveraging AI tools such as Claude, and to learn to work with
+these tools. Please note that, while AI assistance has accelerated
+development, I cannot guarantee the originality or accuracy of all code
+segments, as the sources used by large language models are not always
+transparent or verifiable. The results and information presented here have
+not been exhaustively validated. As such, I advise caution: **do not rely on
+this code or its output for critical applications without independent
+verification.** The disclaimer below applies in full.
+
+## Disclaimer
+
+This project is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+FITNESS FOR A PARTICULAR PURPOSE.
+
 ## License
 
 The code in this repository (Dockerfiles, entrypoint scripts, configuration

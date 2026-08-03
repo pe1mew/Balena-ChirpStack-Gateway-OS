@@ -34,3 +34,10 @@ this repository contain the respective upstream license texts.
   (environment-variable-driven gateway configuration on balena) from scratch
   on the ChirpStack toolchain, with credit to JP Meijers in the
   [README](README.md#acknowledgements).
+
+## Disclaimer
+
+This project is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+FITNESS FOR A PARTICULAR PURPOSE. See also the AI-assisted development note
+in the [README](README.md#about-this-project-ai-assisted-development).

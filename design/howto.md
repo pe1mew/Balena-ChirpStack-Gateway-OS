@@ -183,10 +183,13 @@ identity source it selected and the public key — verify the reported hotspot
 name against the Helium explorer (validated on a SenseCAP M1: the original
 onboarded identity resumed working with no onboarding steps).
 
-Recommended: `GW_POC_DISABLE=true` — Helium PoC beaconing is sunset, and
-without this flag gateway-rs logs recurring `beaconer: failed to reconnect`
-warnings and attempts pointless beacon transmissions. Data forwarding via the
-packet router is unaffected.
+PoC beaconing is disabled by default (`GW_POC_DISABLE=true` set by the
+entrypoint) — Helium PoC beaconing is sunset. This stops beacon
+transmissions and witness reports; note that gateway-rs v1.3.0 still runs
+its ingest reconnect loop unconditionally, so a periodic
+`beaconer: failed to reconnect` warning remains in the logs and is
+**harmless**. Set `GW_POC_DISABLE=false` to re-enable beaconing. Data
+forwarding via the packet router is unaffected either way.
 
 ### Gateway mesh (border/relay)
 

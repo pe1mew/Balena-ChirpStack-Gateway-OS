@@ -27,6 +27,9 @@ CFG=/opt/app/settings.toml
 # ---- defaults ---------------------------------------------------------------
 # GWMP listener must bind the container network (upstream default is loopback).
 export GW_LISTEN="${GW_LISTEN:-0.0.0.0:1680}"
+# Helium PoC beaconing is sunset: disabled by default (set GW_POC_DISABLE=false
+# to re-enable the beaconer).
+export GW_POC_DISABLE="${GW_POC_DISABLE:-true}"
 # Helium region from CHANNEL_PLAN unless explicitly set.
 if [ -z "${GW_REGION:-}" ]; then
   PLAN=$(echo "${CHANNEL_PLAN:-eu868}" | tr 'A-Z' 'a-z')

@@ -431,6 +431,7 @@ passed straight through — no entrypoint templating.
 | `HELIUM_ECC_URI` | `ecc://i2c-1:96?slot=0` | keypair URI used when the ECC608 is selected; onboarding URI derived as the same bus with `slot=15` |
 | `HELIUM_SWARM_KEY` | empty | priority 2 (no secure element): base64-encoded content of an existing swarm-key/keypair file; the entrypoint decodes it and **overwrites** the keypair file at every container start, transferring that identity |
 | `GW_KEYPAIR` | resolved by entrypoint | normally not set by hand — the entrypoint sets it per the D7 priority (ECC URI, else `/etc/helium_gateway/keypair.bin`, generated on first start and persisted in the `helium-data` volume); may be overridden explicitly for special cases |
+| `GW_POC_DISABLE` | `true` | PoC beaconing disabled by default (sunset); `false` re-enables the beaconer |
 | `GW_LOG_LEVEL` | `info` | log level |
 
 Wiring: set `UDP_ENABLED=true`, `UDP_SERVER_ADDRESS_0=helium-gateway`,
