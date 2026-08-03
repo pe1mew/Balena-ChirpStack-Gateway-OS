@@ -1,0 +1,84 @@
+# Balena ChirpStack Gateway OS
+
+A multi-container [balenaCloud](https://www.balena.io/) application that turns
+a Raspberry Pi based LoRaWAN® gateway — including converted Helium hotspots —
+into the equivalent of [ChirpStack Gateway OS](https://www.chirpstack.io/docs/chirpstack-gateway-os/),
+configured entirely through **environment variables** in the balena dashboard.
+
+One device can serve multiple LoRaWAN networks at the same time. Validated on
+real hardware: a Seeed SenseCAP M1 concurrently forwarding to a private
+ChirpStack instance (MQTT), The Things Network (Semtech UDP), and the Helium
+IoT network (gateway-rs) — the latter with the hotspot's original ECC608
+identity preserved through the conversion.
+
+## Services
+
+| Service | Upstream project | Default |
+|---|---|---|
+| `concentratord` | [chirpstack-concentratord](https://github.com/chirpstack/chirpstack-concentratord) — SX1301/SX1302/2G4 HAL daemon | enabled |
+| `mqtt-forwarder` | [chirpstack-mqtt-forwarder](https://github.com/chirpstack/chirpstack-mqtt-forwarder) — events → ChirpStack MQTT broker | enabled |
+| `udp-forwarder` | [chirpstack-udp-forwarder](https://github.com/chirpstack/chirpstack-udp-forwarder) — events → Semtech-UDP server(s) (TTN, Helium, …) | disabled |
+| `gateway-mesh` | [chirpstack-gateway-mesh](https://github.com/chirpstack/chirpstack-gateway-mesh) — LoRa mesh border/relay | disabled |
+| `helium-gateway` | [helium/gateway-rs](https://github.com/helium/gateway-rs) — Helium IoT network | disabled |
+
+Binaries are downloaded at image build from the upstream releases, pinned by
+version and SHA-256. The submodules in this repository serve as reference and
+as the source of static configuration files; only the UDP forwarder is
+compiled from its submodule (upstream publishes no binaries for it).
+
+## Supported hardware
+
+Any Raspberry Pi supported by balenaOS with a concentrator shield supported by
+concentratord (iC880A, RAK2245/2247/2287, RAK5146, Seeed WM1302, Semtech
+CoreCell, and more). This includes converted Helium hotspots:
+
+| Device | Board | Concentrator | `CONC_MODEL` |
+|---|---|---|---|
+| MNTD./RAK Hotspot Miner V2 | Raspberry Pi 4 | RAK2287 (SX1302) | `rak_2287` |
+| Seeed SenseCAP M1 | Raspberry Pi 4 | WM1302/03 (SX1302/03) | `seeed_wm1302` |
+
+On converted hotspots the Helium identity in the ECC608 secure element
+survives the conversion and is used by gateway-rs automatically.
+
+## Getting started
+
+- [design/howto.md](design/howto.md) — step-by-step deployment guide:
+  flashing, variables, ChirpStack registration, optional services,
+  troubleshooting.
+- [design/design.md](design/design.md) — the full design: architecture,
+  decisions, and the complete environment-variable reference (section 5).
+
+The short version: push this repository to a balena fleet, flash a device,
+set `CONC_MODEL` and `MQTT_SERVER`, done. Every setting is a dashboard
+variable; changing one restarts only the affected service.
+
+## Acknowledgements
+
+This project stands on the work of others, and that deserves to be said
+clearly:
+
+- **JP Meijers**, author of
+  [ttn-resin-gateway-rpi](https://github.com/jpmeijers/ttn-resin-gateway-rpi) —
+  the direct inspiration for this repository. His balena/resin.io gateway
+  concept — a container that configures a LoRaWAN gateway from nothing but
+  dashboard environment variables — has been running for **more than nine
+  years** on the gateways of **Stichting IoT-Apeldoorn e.o.**, and it still
+  works today. This repository is that same idea, rebuilt on the ChirpStack
+  toolchain. Thank you, JP.
+- **Orne Brocaar**, author of [ChirpStack](https://www.chirpstack.io/) and
+  all four ChirpStack gateway components used here (MIT licensed). The clean
+  ZMQ architecture and the native environment-variable substitution in his
+  configuration loaders are what make this project's approach possible.
+- **Helium / Nova Labs** for [gateway-rs](https://github.com/helium/gateway-rs)
+  (Apache-2.0), whose native `GW_*` environment overrides and ECC608 support
+  fit this design like a glove.
+- **Semtech** for the SX130x HAL libraries embedded in the concentratord
+  binaries.
+- **RAKwireless** and **Seeed Studio** for well-documented gateway hardware.
+
+## License
+
+The code in this repository (Dockerfiles, entrypoint scripts, configuration
+templates, documentation) is MIT licensed — see [LICENSE](LICENSE). The
+upstream components keep their own licenses — see [license.md](license.md)
+for the complete overview.

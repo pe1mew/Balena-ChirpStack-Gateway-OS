@@ -1,0 +1,39 @@
+The MIT License (MIT)
+
+Copyright (c) 2026 Remko Welling (PE1MEW)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+-----------------------------------------------------------------------------
+
+This license covers the original work in this repository: the Dockerfiles,
+entrypoint scripts, configuration templates, compose file, and documentation.
+
+Third-party components used by this project keep their own licenses (see
+license.md for details):
+
+  - chirpstack-concentratord, chirpstack-mqtt-forwarder,
+    chirpstack-udp-forwarder, chirpstack-gateway-mesh
+      Copyright (c) Orne Brocaar — The MIT License
+  - helium gateway-rs
+      Copyright (c) Helium Systems, Inc. — Apache License 2.0
+  - Semtech SX130x HAL (embedded in the concentratord binaries)
+      Copyright (c) Semtech Corporation — Revised BSD License
+  - ttn-resin-gateway-rpi by JP Meijers served as the conceptual template
+    for this project; no code from it is included in this repository.
