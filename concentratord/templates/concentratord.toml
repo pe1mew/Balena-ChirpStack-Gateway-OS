@@ -1,0 +1,26 @@
+# Rendered at container start: concentratord replaces $VAR with the
+# environment value before parsing (native substitution). All variables used
+# here are exported with defaults by entrypoint.sh — an unset variable would
+# remain as a literal `$VAR` string and fail TOML parsing or validation.
+#
+# This file is concatenated with the region_<plan>.toml and
+# channels_<plan>.toml example files selected by CHANNEL_PLAN.
+
+[concentratord]
+  log_level = "$CONC_LOG_LEVEL"
+  log_to_syslog = false
+  stats_interval = "$CONC_STATS_INTERVAL"
+  disable_crc_filter = $CONC_DISABLE_CRC_FILTER
+
+  [concentratord.api]
+    event_bind = "tcp://0.0.0.0:3001"
+    command_bind = "tcp://0.0.0.0:3002"
+
+[gateway]
+  antenna_gain = $CONC_ANTENNA_GAIN
+  lorawan_public = $CONC_LORAWAN_PUBLIC
+  region = "$CONC_REGION"
+  model = "$CONC_MODEL"
+  model_flags = $CONC_FLAGS_TOML
+  gateway_id = "$GATEWAY_ID"
+$CONC_OPTIONAL_LINES

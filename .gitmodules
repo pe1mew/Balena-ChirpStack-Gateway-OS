@@ -10,3 +10,12 @@
 [submodule "chirpstack-gateway-mesh"]
 	path = chirpstack-gateway-mesh
 	url = https://github.com/chirpstack/chirpstack-gateway-mesh.git
+[submodule "chirpstack-concentratord"]
+	path = chirpstack-concentratord
+	url = https://github.com/chirpstack/chirpstack-concentratord.git
+[submodule "chirpstack-udp-forwarder"]
+	path = chirpstack-udp-forwarder
+	url = https://github.com/chirpstack/chirpstack-udp-forwarder.git
+[submodule "gateway-rs"]
+	path = gateway-rs
+	url = https://github.com/helium/gateway-rs.git

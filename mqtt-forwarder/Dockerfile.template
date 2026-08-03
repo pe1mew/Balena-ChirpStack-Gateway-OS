@@ -1,0 +1,31 @@
+# ChirpStack MQTT Forwarder service image.
+#
+# Binary from the upstream release artifact, pinned by version + SHA-256
+# (design decision D8). Default checksum is for the armv7hf artifact; override
+# ARTIFACT_ARCH and SHA256_MQTT_FWD together for another architecture.
+
+FROM alpine:3.20 AS fetch
+
+ARG MQTT_FWD_VERSION=4.6.0
+ARG ARTIFACT_ARCH=armv7hf
+ARG BASE_URL=https://artifacts.chirpstack.io/downloads/chirpstack-mqtt-forwarder
+ARG SHA256_MQTT_FWD=d8a9884eacc9c50a7e3d758975d7e99c6bb42257677c7bab7dd4b2d7cdb79a1b
+
+WORKDIR /fetch
+RUN mkdir -p /out \
+ && wget -q -O fwd.tar.gz \
+      "${BASE_URL}/chirpstack-mqtt-forwarder_${MQTT_FWD_VERSION}_linux_${ARTIFACT_ARCH}.tar.gz" \
+ && echo "${SHA256_MQTT_FWD}  fwd.tar.gz" | sha256sum -c \
+ && tar -xzf fwd.tar.gz -C /out \
+ && chmod +x /out/*
+
+FROM balenalib/%%BALENA_MACHINE_NAME%%-debian:bookworm-run
+
+ENV UDEV=off
+
+COPY --from=fetch /out/chirpstack-mqtt-forwarder /usr/bin/chirpstack-mqtt-forwarder
+COPY mqtt-forwarder/templates/ /opt/app/templates/
+COPY mqtt-forwarder/entrypoint.sh /opt/app/entrypoint.sh
+RUN chmod +x /opt/app/entrypoint.sh
+
+CMD ["/opt/app/entrypoint.sh"]

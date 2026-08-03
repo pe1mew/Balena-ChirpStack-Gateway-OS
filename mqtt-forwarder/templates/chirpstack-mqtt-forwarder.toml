@@ -1,0 +1,29 @@
+# Rendered at container start via chirpstack-mqtt-forwarder's native $VAR
+# substitution. Every placeholder is exported with a default by entrypoint.sh.
+
+[logging]
+  level = "$MQTT_LOG_LEVEL"
+  log_to_syslog = false
+
+[mqtt]
+  topic_prefix = "$MQTT_TOPIC_PREFIX"
+  server = "$MQTT_SERVER"
+  username = "$MQTT_USERNAME"
+  password = "$MQTT_PASSWORD"
+  qos = $MQTT_QOS
+  json = $MQTT_JSON
+  ca_cert = "$MQTT_CA_FILE"
+  tls_cert = "$MQTT_CERT_FILE"
+  tls_key = "$MQTT_KEY_FILE"
+
+[backend]
+  enabled = "concentratord"
+
+  [backend.filters]
+    lorawan_only = $MQTT_FILTER_LORAWAN_ONLY
+    dev_addr_prefixes = $MQTT_DEV_ADDR_FILTER_TOML
+    join_eui_prefixes = $MQTT_JOIN_EUI_FILTER_TOML
+
+  [backend.concentratord]
+    event_url = "$MQTT_EVENT_URL"
+    command_url = "$MQTT_COMMAND_URL"

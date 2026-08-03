@@ -1,0 +1,48 @@
+# ChirpStack Concentratord service image.
+#
+# Binaries come from upstream release artifacts, pinned by version + SHA-256
+# (design decision D8). The default checksums below are for the armv7hf
+# artifacts; when building for another architecture, override ARTIFACT_ARCH
+# and the three SHA256_* build args together.
+
+FROM alpine:3.20 AS fetch
+
+ARG CONC_VERSION=4.7.1
+ARG ARTIFACT_ARCH=armv7hf
+ARG BASE_URL=https://artifacts.chirpstack.io/downloads/chirpstack-concentratord
+ARG SHA256_SX1301=5acaaee6e4f88a2df97d4588e6364b3aed79792579738ccc255ce06083d3c4cb
+ARG SHA256_SX1302=9eb735a02712988a6fd13d30994554850282a3e0dcdd77b94c89377c9863906e
+ARG SHA256_2G4=a5398e94acb2ba528de4172c1099dde0c983fba173ee2fb3e9b12c6605409a14
+
+WORKDIR /fetch
+RUN mkdir -p /out \
+ && for flavor in sx1301 sx1302 2g4; do \
+      wget -q -O "${flavor}.tar.gz" \
+        "${BASE_URL}/chirpstack-concentratord-${flavor}_${CONC_VERSION}_linux_${ARTIFACT_ARCH}.tar.gz"; \
+    done \
+ && echo "${SHA256_SX1301}  sx1301.tar.gz" | sha256sum -c \
+ && echo "${SHA256_SX1302}  sx1302.tar.gz" | sha256sum -c \
+ && echo "${SHA256_2G4}  2g4.tar.gz" | sha256sum -c \
+ && for flavor in sx1301 sx1302 2g4; do tar -xzf "${flavor}.tar.gz" -C /out; done \
+ && chmod +x /out/*
+
+FROM balenalib/%%BALENA_MACHINE_NAME%%-debian:bookworm-run
+
+# udev enabled: required for USB concentrator enumeration (/dev/ttyACM*).
+ENV UDEV=on
+
+# wget: used by the entrypoint for the supervisor-API MAC lookup (sx1301).
+RUN install_packages wget
+
+COPY --from=fetch /out/ /usr/bin/
+
+# Static region/channel example configs from the submodules (no compilation).
+COPY chirpstack-concentratord/chirpstack-concentratord-sx1301/config/ /etc/chirpstack-concentratord/examples/sx1301/
+COPY chirpstack-concentratord/chirpstack-concentratord-sx1302/config/ /etc/chirpstack-concentratord/examples/sx1302/
+COPY chirpstack-concentratord/chirpstack-concentratord-2g4/config/ /etc/chirpstack-concentratord/examples/2g4/
+
+COPY concentratord/templates/ /opt/app/templates/
+COPY concentratord/entrypoint.sh /opt/app/entrypoint.sh
+RUN chmod +x /opt/app/entrypoint.sh
+
+CMD ["/opt/app/entrypoint.sh"]

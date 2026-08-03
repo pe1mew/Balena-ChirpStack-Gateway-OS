@@ -1,0 +1,21 @@
+version: "2.1"
+
+services:
+  concentratord:
+    build:
+      context: .
+      dockerfile: concentratord/Dockerfile.template
+    privileged: true
+    restart: always
+    labels:
+      # Supervisor API access: used to read the host MAC address for the
+      # SX1301 gateway-ID fallback (see design.md section 5.1).
+      io.balena.features.supervisor-api: "1"
+
+  mqtt-forwarder:
+    build:
+      context: .
+      dockerfile: mqtt-forwarder/Dockerfile.template
+    restart: always
+    depends_on:
+      - concentratord

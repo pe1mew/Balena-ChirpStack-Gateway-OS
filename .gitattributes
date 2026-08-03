@@ -1,0 +1,7 @@
+# Files that are COPY'd into Linux container images must keep LF endings,
+# also on Windows checkouts (CRLF breaks /bin/sh scripts and TOML parsing).
+*.sh text eol=lf
+*.toml text eol=lf
+*.yml text eol=lf
+Dockerfile* text eol=lf
+.dockerignore text eol=lf

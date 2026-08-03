@@ -1,0 +1,11 @@
+# Whitelist: the build context only needs the service directories and the
+# static config examples from the concentratord submodule. Everything else
+# (especially the chirpstack-gateway-os/openwrt tree) must stay out of the
+# upload to the balena builders.
+*
+!docker-compose.yml
+!concentratord
+!mqtt-forwarder
+!chirpstack-concentratord
+chirpstack-concentratord/.git
+chirpstack-concentratord/target
