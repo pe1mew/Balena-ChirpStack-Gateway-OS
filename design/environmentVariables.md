@@ -59,7 +59,7 @@ if your concentrator has no usable chip EUI.
 | `CONC_RESET_PIN` | model default | reset line offset (GPIO character-device numbering, **not** physical pin) |
 | `CONC_POWER_EN_CHIP` | model default | SX1302 power-enable GPIO chip (models that support it) |
 | `CONC_POWER_EN_PIN` | model default | SX1302 power-enable line offset |
-| `CONC_GNSS_DEV_PATH` | model default | GNSS serial device, e.g. `/dev/ttyAMA0`; empty string disables GNSS |
+| `CONC_GNSS_DEV_PATH` | model default | GNSS serial device, e.g. `/dev/ttyAMA0`; empty string disables GNSS. **GPS is intentionally unsupported in this project** (design D9) — the variable passes through for experimenters only |
 | `CONC_I2C_DEV_PATH` | model default | i2c device for the temperature sensor |
 | `CONC_STATS_INTERVAL` | `30s` | stats publish interval (humantime format) |
 | `CONC_DISABLE_CRC_FILTER` | `false` | also forward CRC-invalid frames |

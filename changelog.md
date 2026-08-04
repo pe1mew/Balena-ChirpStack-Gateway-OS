@@ -8,6 +8,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 
 ## [Unreleased]
 
+**Validated on hardware**
+- Gateway mesh (border/relay): SenseCAP M1 as border gateway
+  (`MESH_BORDER_GATEWAY=true`, `MQTT_BACKEND=mesh`) receiving and unwrapping
+  MIC-valid relayed uplinks (hop count 1) from a **RAK7269v2 running stock
+  ChirpStack Gateway OS** as relay — proving cross-stack mesh
+  interoperability between this Balena stack and Gateway OS gateways
+  (relevant for mixed fleets during migration).
+- iC880A on Pi 3B+ (`imst_ic880a`, `CONC_RESET_PIN=17` for pin-11 backplane
+  wiring) forwarding to ChirpStack; RAK831 on Pi 3B+ (`rak_2245`) forwarding
+  to TTN via the ttn-forwarder.
+
 **Added**
 - `ttn-forwarder` multi-connection support (chirpstack-ttn-mqtt-forwarder
   v0.2.0, `[[ttn]]` array of tables): up to 4 simultaneous upstream

@@ -214,6 +214,21 @@ and chirpstack-ttn-mqtt-forwarder — developed in this project, no published
 artifacts. Both services build from their pinned submodules (the Appendix A
 fallback); both submodules must be initialised before `balena push`.
 
+**D9 — GPS/GNSS is intentionally not supported.**
+Some gateways carry a GPS receiver, and concentratord can read it
+(`GPS` model flag / `gnss_dev_path`), but this design deliberately does not
+implement or validate GPS support. Rationale: gateway coordinates are static
+in practice and better maintained in the LNS registration; the fleet's
+Pi 3-based gateways would need UART reconfiguration (`enable_uart`,
+Bluetooth overlay) per device; the `imst_ic880a` concentratord profile
+ignores GNSS settings entirely; and time synchronisation comes from NTP on
+connected gateways. The `CONC_GNSS_DEV_PATH` / `CONC_MODEL_FLAGS=GPS`
+variables pass through to concentratord unchanged for experimenters, but
+they are **unsupported and unvalidated** in this project. Revisiting this
+decision would involve: the Pi 3 UART host configuration, an upstream
+contribution adding GNSS to the ic880a profile, and optionally live-location
+support in the ttn-forwarder.
+
 ---
 
 ## 4. Repository layout (target)
