@@ -204,6 +204,15 @@ fleet-wide `MESH_ROOT_KEY` (32 hex chars). On the border gateway additionally
 consumes the mesh proxy instead of concentratord directly). Region mapping
 follows `CHANNEL_PLAN`; override with `MESH_REGION` if needed.
 
+Recommended fleet topology: set `MESH_ENABLED`, `MESH_BORDER_GATEWAY=true`
+and `MQTT_BACKEND=mesh` **fleet-wide**, making every internet-connected
+gateway a border. Offline relays are then covered by whichever border(s)
+happen to be in RF range — no per-device pairing to manage; the LNS
+deduplicates relayed uplinks arriving via multiple borders. Relays can be
+this stack (relay role) or stock ChirpStack Gateway OS devices — cross-stack
+mesh interoperability is validated (Balena border ↔ Gateway OS RAK7269v2
+relay), as long as root key, frequencies and data rate match.
+
 Note: the UDP forwarder is built from the pinned submodule instead of a
 downloaded artifact — upstream publishes no binaries for it (documented D8
 exception), so the first build of that service takes several minutes on the
