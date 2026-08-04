@@ -20,6 +20,7 @@ this repository contain the respective upstream license texts.
 | [chirpstack-udp-forwarder](https://github.com/chirpstack/chirpstack-udp-forwarder) | Orne Brocaar | MIT | UDP forwarder (compiled from the submodule) |
 | [chirpstack-gateway-mesh](https://github.com/chirpstack/chirpstack-gateway-mesh) | Orne Brocaar | MIT | mesh border/relay binary + region mappings |
 | [gateway-rs](https://github.com/helium/gateway-rs) | Helium Systems, Inc. | Apache-2.0 | Helium gateway binary + default settings |
+| [chirpstack-ttn-mqtt-forwarder](https://github.com/pe1mew/chirpstack-ttn-mqtt-forwarder) | Remko Welling (PE1MEW) | MIT | TTN protobuf-MQTT forwarder (this project's own component; compiled from the submodule) |
 | Semtech SX130x HAL | Semtech Corporation | Revised BSD | embedded inside the concentratord binaries |
 | [ChirpStack Gateway OS](https://github.com/chirpstack/chirpstack-gateway-os) | Orne Brocaar | MIT | reference only (feature parity target); nothing from it ships in the images |
 | [ttn-resin-gateway-rpi](https://github.com/jpmeijers/ttn-resin-gateway-rpi) | JP Meijers and contributors | no license file published | **inspiration only** — the env-var-driven balena gateway pattern; no code from it is included in this repository |

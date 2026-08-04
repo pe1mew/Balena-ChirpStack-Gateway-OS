@@ -11,7 +11,7 @@ Thank you for considering contributing to this project! Please follow the guidel
    ```sh
    git clone https://github.com/pe1mew/Balena-ChirpStack-Gateway-OS.git
    cd Balena-ChirpStack-Gateway-OS
-   git submodule update --init chirpstack-concentratord chirpstack-gateway-mesh chirpstack-udp-forwarder
+   git submodule update --init chirpstack-concentratord chirpstack-gateway-mesh chirpstack-udp-forwarder chirpstack-ttn-mqtt-forwarder
    ```
 3. **Create a Branch**: Use a descriptive branch name for your changes:
    ```sh

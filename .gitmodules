@@ -19,3 +19,6 @@
 [submodule "gateway-rs"]
 	path = gateway-rs
 	url = https://github.com/helium/gateway-rs.git
+[submodule "chirpstack-ttn-mqtt-forwarder"]
+	path = chirpstack-ttn-mqtt-forwarder
+	url = https://github.com/pe1mew/chirpstack-ttn-mqtt-forwarder.git

@@ -1,0 +1,36 @@
+# chirpstack-ttn-mqtt-forwarder configuration template.
+# $PLACEHOLDERS are substituted by the daemon from environment variables;
+# every placeholder is exported by entrypoint.sh (D4).
+
+[logging]
+  level = "$TTN_LOG_LEVEL"
+  log_to_syslog = false
+
+[backend]
+  enabled = "concentratord"
+
+  [backend.filters]
+    forward_crc_ok = $TTN_CRC_OK
+    forward_crc_invalid = $TTN_CRC_INVALID
+    forward_crc_missing = $TTN_CRC_MISSING
+    lorawan_only = $TTN_FILTER_LORAWAN_ONLY
+    dev_addr_prefixes = $TTN_DEV_ADDR_FILTER_TOML
+    join_eui_prefixes = $TTN_JOIN_EUI_FILTER_TOML
+
+  [backend.concentratord]
+    event_url = "$TTN_EVENT_URL"
+    command_url = "$TTN_COMMAND_URL"
+
+# The CONNECTIONS placeholder below expands to one double-bracket ttn block
+# per enabled connection slot (entrypoint renders them from the indexed
+# TTN_*_n variables; placeholder names must never appear in comments).
+$TTN_CONNECTIONS_TOML
+
+[gateway]
+  description = "$TTN_DESCRIPTION"
+  platform = "$TTN_PLATFORM"
+  contact_email = "$TTN_CONTACT_EMAIL"
+  frequency_plan = "$TTN_FREQUENCY_PLAN"
+  latitude = $TTN_LATITUDE
+  longitude = $TTN_LONGITUDE
+  altitude = $TTN_ALTITUDE

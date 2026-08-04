@@ -8,14 +8,21 @@
 !concentratord
 !mqtt-forwarder
 !udp-forwarder
+!ttn-forwarder
 !gateway-mesh
 !helium-gateway
 !chirpstack-concentratord
 !chirpstack-gateway-mesh
 !chirpstack-udp-forwarder
+!chirpstack-ttn-mqtt-forwarder
 chirpstack-concentratord/.git
 chirpstack-concentratord/target
 chirpstack-gateway-mesh/.git
 chirpstack-gateway-mesh/target
 chirpstack-udp-forwarder/.git
 chirpstack-udp-forwarder/target
+chirpstack-ttn-mqtt-forwarder/.git
+chirpstack-ttn-mqtt-forwarder/target
+# Nested study submodules of the ttn forwarder — not needed by the build.
+chirpstack-ttn-mqtt-forwarder/chirpstack-mqtt-forwarder
+chirpstack-ttn-mqtt-forwarder/packet_forwarder

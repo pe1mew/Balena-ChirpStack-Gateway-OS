@@ -31,6 +31,14 @@ services:
     depends_on:
       - concentratord
 
+  ttn-forwarder:
+    build:
+      context: .
+      dockerfile: ttn-forwarder/Dockerfile.template
+    restart: always
+    depends_on:
+      - concentratord
+
   gateway-mesh:
     build:
       context: .

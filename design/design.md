@@ -114,6 +114,7 @@ What we deliberately do differently:
 | `concentratord` | all three concentratord binaries + all `region_*.toml` / `channels_*.toml` example configs | `privileged: true` (SPI, GPIO cdev, UART/USB) | enabled |
 | `mqtt-forwarder` | `chirpstack-mqtt-forwarder` | none | enabled |
 | `udp-forwarder` | `chirpstack-udp-forwarder` | none | **disabled** (idles) |
+| `ttn-forwarder` | `chirpstack-ttn-mqtt-forwarder` (this project; TTN protobuf-MQTT gateway protocol) | none | **disabled** (idles) |
 | `gateway-mesh` | `chirpstack-gateway-mesh` + region mapping TOMLs | none | **disabled** (idles) |
 | `helium-gateway` | helium `gateway-rs` | i2c device (`/dev/i2c-1`) for the ECC608 secure element; named volume for file-keypair fallback | **disabled** (idles) |
 
@@ -207,9 +208,11 @@ may stop being maintained, its release artifact (and optionally the others)
 is **mirrored as a release asset of this repository**, and the Dockerfile ARG
 allows switching the download base URL to the mirror. Rationale and
 alternatives in Appendix A.
-*Exception:* chirpstack-udp-forwarder — upstream publishes **no** binary
-artifacts at all (empty artifacts directory; Gateway OS also compiles it), so
-that one service builds from its pinned submodule (the Appendix A fallback).
+*Exceptions:* chirpstack-udp-forwarder — upstream publishes **no** binary
+artifacts at all (empty artifacts directory; Gateway OS also compiles it) —
+and chirpstack-ttn-mqtt-forwarder — developed in this project, no published
+artifacts. Both services build from their pinned submodules (the Appendix A
+fallback); both submodules must be initialised before `balena push`.
 
 ---
 

@@ -18,13 +18,15 @@ identity preserved through the conversion.
 | `concentratord` | [chirpstack-concentratord](https://github.com/chirpstack/chirpstack-concentratord) — SX1301/SX1302/2G4 HAL daemon | enabled |
 | `mqtt-forwarder` | [chirpstack-mqtt-forwarder](https://github.com/chirpstack/chirpstack-mqtt-forwarder) — events → ChirpStack MQTT broker | enabled |
 | `udp-forwarder` | [chirpstack-udp-forwarder](https://github.com/chirpstack/chirpstack-udp-forwarder) — events → Semtech-UDP server(s) (TTN, Helium, …) | disabled |
+| `ttn-forwarder` | [chirpstack-ttn-mqtt-forwarder](https://github.com/pe1mew/chirpstack-ttn-mqtt-forwarder) — events → TTN protobuf-MQTT ("packet broker"; The Things Gateway replacement) | disabled |
 | `gateway-mesh` | [chirpstack-gateway-mesh](https://github.com/chirpstack/chirpstack-gateway-mesh) — LoRa mesh border/relay | disabled |
 | `helium-gateway` | [helium/gateway-rs](https://github.com/helium/gateway-rs) — Helium IoT network | disabled |
 
 Binaries are downloaded at image build from the upstream releases, pinned by
 version and SHA-256. The submodules in this repository serve as reference and
-as the source of static configuration files; only the UDP forwarder is
-compiled from its submodule (upstream publishes no binaries for it).
+as the source of static configuration files; the UDP forwarder (upstream
+publishes no binaries for it) and the TTN forwarder (developed in this
+project) are compiled from their submodules.
 
 ## Supported hardware
 
@@ -45,8 +47,10 @@ survives the conversion and is used by gateway-rs automatically.
 - [design/howto.md](design/howto.md) — step-by-step deployment guide:
   flashing, variables, ChirpStack registration, optional services,
   troubleshooting.
-- [design/design.md](design/design.md) — the full design: architecture,
-  decisions, and the complete environment-variable reference (section 5).
+- [design/environmentVariables.md](design/environmentVariables.md) — the
+  complete environment-variable reference, with the minimum set marked.
+- [design/design.md](design/design.md) — the full design: architecture and
+  decisions.
 
 The short version: push this repository to a balena fleet, flash a device,
 set `CONC_MODEL` and `MQTT_SERVER`, done. Every setting is a dashboard

@@ -22,16 +22,18 @@ with different variables; see [section 9](#9-other-deployments).
 
 ## 2. Get the source
 
-Only the `chirpstack-concentratord` submodule is needed by the build (static
-config examples); do **not** recurse into all submodules — the
-`chirpstack-gateway-os` submodule pulls in the entire OpenWrt tree.
+Only the submodules used by the build are needed (`chirpstack-concentratord`
+for static config examples, `chirpstack-udp-forwarder` and
+`chirpstack-ttn-mqtt-forwarder` as compile sources); do **not** recurse into
+all submodules — the `chirpstack-gateway-os` submodule pulls in the entire
+OpenWrt tree.
 
 ```bash
 git clone https://github.com/pe1mew/Balena-ChirpStack-Gateway-OS.git
 ```
 
 ```bash
-cd Balena-ChirpStack-Gateway-OS && git submodule update --init chirpstack-concentratord
+cd Balena-ChirpStack-Gateway-OS && git submodule update --init chirpstack-concentratord chirpstack-udp-forwarder chirpstack-ttn-mqtt-forwarder
 ```
 
 ## 3. Push the release to your fleet
@@ -64,6 +66,9 @@ correct — do not override the pins. If the concentrator misbehaves after the
 SD swap, reseat the RAK2287 mini-PCIe module first (see troubleshooting).
 
 ## 5. Configure host and device variables
+
+The complete variable reference (all services, defaults, minimum set) is in
+[environmentVariables.md](environmentVariables.md).
 
 ### Fleet or device configuration (dashboard → Device/Fleet configuration)
 
@@ -199,7 +204,25 @@ fleet-wide `MESH_ROOT_KEY` (32 hex chars). On the border gateway additionally
 consumes the mesh proxy instead of concentratord directly). Region mapping
 follows `CHANNEL_PLAN`; override with `MESH_REGION` if needed.
 
-Note: the UDP forwarder is the one component built from the pinned submodule
-instead of a downloaded artifact — upstream publishes no binaries for it
-(documented D8 exception), so the first build of that service takes several
-minutes on the balena builders; later builds hit the layer cache.
+Note: the UDP forwarder is built from the pinned submodule instead of a
+downloaded artifact — upstream publishes no binaries for it (documented D8
+exception), so the first build of that service takes several minutes on the
+balena builders; later builds hit the layer cache.
+
+### TTN protobuf MQTT (The Things Gateway replacement)
+
+For gateways registered with the TTN protobuf-MQTT protocol (mp_pkt_fwd /
+ttn-gateway-connector era, e.g. The Things Gateway–class hardware): set
+`TTN_ENABLED=true`, `TTN_GATEWAY_ID=<gateway id from the console>` and
+`TTN_GATEWAY_KEY=<gateway key>` (device variables). The default endpoint is
+`eu1.cloud.thethings.network:1881` ("packet broker"); override `TTN_SERVER`
+for another cluster or a self-hosted gateway-connector-bridge. The device
+keeps its existing gateway registration — no re-registration needed. Like
+the UDP forwarder, this service compiles from its submodule (D8 exception),
+so the first build takes several minutes.
+
+Multiple upstream connections (up to 4) are supported via indexed slots:
+add `TTN_GATEWAY_ID_1` + `TTN_GATEWAY_KEY_1` (+ `TTN_SERVER_1`, …) for a
+second registration; the unsuffixed variables are aliases for slot 0. See
+[environmentVariables.md](environmentVariables.md) for the per-connection
+variable set.

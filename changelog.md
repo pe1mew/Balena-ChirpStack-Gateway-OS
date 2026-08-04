@@ -6,6 +6,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 
 ---
 
+## [Unreleased]
+
+**Added**
+- `ttn-forwarder` multi-connection support (chirpstack-ttn-mqtt-forwarder
+  v0.2.0, `[[ttn]]` array of tables): up to 4 simultaneous upstream
+  connections via indexed `TTN_GATEWAY_ID_n` / `TTN_GATEWAY_KEY_n` /
+  `TTN_SERVER_n` slots; unsuffixed variables remain slot-0 aliases
+  (backwards compatible with single-connection deployments).
+- `ttn-forwarder` service
+  ([chirpstack-ttn-mqtt-forwarder](https://github.com/pe1mew/chirpstack-ttn-mqtt-forwarder)
+  v0.2.0, compiled from submodule): bridges concentratord to the TTN
+  protobuf-MQTT gateway protocol (The Things Stack Gateway Server MQTT
+  frontend / "packet broker", default `eu1.cloud.thethings.network:1881`, or
+  a self-hosted gateway-connector-bridge). Drop-in replacement for gateways
+  commissioned with the mp_pkt_fwd + ttn-gateway-connector stack — existing
+  gateway registrations (ID + key) keep working. Disabled by default
+  (`TTN_ENABLED=true` to activate); optional TLS (port 8881), CRC and
+  DevAddr/JoinEUI filters, `concentratord` or `mesh` backend. The daemon
+  natively supports multiple upstream connections (`[[ttn]]` array; uplinks
+  fan out, downlinks share the JIT queue); the balena template exposes one
+  connection via `TTN_*` variables.
+
 ## [1.0.0] — 2026-08-03
 
 First release: feature parity with the ChirpStack Gateway OS "base" image on
