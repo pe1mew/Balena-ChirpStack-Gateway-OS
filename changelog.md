@@ -23,10 +23,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
   commissioned with the mp_pkt_fwd + ttn-gateway-connector stack — existing
   gateway registrations (ID + key) keep working. Disabled by default
   (`TTN_ENABLED=true` to activate); optional TLS (port 8881), CRC and
-  DevAddr/JoinEUI filters, `concentratord` or `mesh` backend. The daemon
-  natively supports multiple upstream connections (`[[ttn]]` array; uplinks
-  fan out, downlinks share the JIT queue); the balena template exposes one
-  connection via `TTN_*` variables.
+  DevAddr/JoinEUI filters, `concentratord` or `mesh` backend. Supports
+  multiple simultaneous upstream connections via indexed slots
+  (`TTN_GATEWAY_ID_0..3` etc., resin-template pattern; unsuffixed `TTN_*`
+  variables alias slot 0) — uplinks fan out to every connection, downlinks
+  share the JIT queue first come, first served.
 
 ## [1.0.0] — 2026-08-03
 

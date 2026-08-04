@@ -106,9 +106,7 @@ Stack Gateway Server MQTT frontend / "packet broker", or a self-hosted
 gateway-connector-bridge) — the drop-in replacement for gateways commissioned
 with the mp_pkt_fwd + ttn-gateway-connector stack. Source:
 [chirpstack-ttn-mqtt-forwarder](https://github.com/pe1mew/chirpstack-ttn-mqtt-forwarder)
-(submodule; compiled at image build). The daemon natively supports multiple
-upstream connections (`[[ttn]]` array in its config); this template exposes
-one connection — mount a custom config for more.
+(submodule; compiled at image build).
 
 Supports **multiple simultaneous upstream connections** (v0.2.0): indexed
 connection slots `n` = `0`–`3` (resin-template pattern), each with its own
@@ -141,16 +139,16 @@ Shared across all connections:
 | `TTN_FILTER_LORAWAN_ONLY` | `false` | drop proprietary frames (`false` = like-for-like mp_pkt_fwd behaviour) |
 | `TTN_FILTER_DEV_ADDR_PREFIXES` | empty | comma list, e.g. `0000ff00/24` |
 | `TTN_FILTER_JOIN_EUI_PREFIXES` | empty | comma list, e.g. `0000ff0000000000/24` |
-
-Note: with multiple connections every network receives all uplinks and each
-may schedule downlinks (first-come-first-served on the JIT queue) — same
-semantics as multi-server Semtech-UDP.
 | `TTN_FREQUENCY_PLAN` | derived from `CHANNEL_PLAN` | status-message frequency plan string, e.g. `EU_863_870` |
 | `TTN_DESCRIPTION` / `TTN_CONTACT_EMAIL` | empty | status-message metadata |
 | `TTN_LATITUDE` / `TTN_LONGITUDE` / `TTN_ALTITUDE` | `0.0` / `0.0` / `0` | static location when concentratord provides none (GNSS) |
 | `TTN_KEEP_ALIVE` | `20s` | MQTT keep-alive |
 | `TTN_RECONNECT_MAX` | `5m` | maximum reconnect backoff |
 | `TTN_LOG_LEVEL` | `info` | log level |
+
+Note: with multiple connections every network receives all uplinks and each
+may schedule downlinks (first-come-first-served on the JIT queue) — same
+semantics as multi-server Semtech-UDP.
 
 ## gateway-mesh (`MESH_*`) — disabled by default
 
