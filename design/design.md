@@ -35,7 +35,7 @@ with a different concentrator module:
 
 | Hotspot | Board | Concentrator | `CONC_MODEL` |
 |---|---|---|---|
-| MNTD./RAK Hotspot Miner V2 | Raspberry Pi 4 (2/4/8 GB, SD-card boot) | RAK2287 (SX1302) | `rak_2287` |
+| MNTD./RAK Hotspot Miner V2 | Raspberry Pi 4 (2/4/8 GB, SD-card boot) | RAK2287 (SX1302) | `rak_2287` + `CONC_RESET_PIN=25` (board reset is GPIO25, not the profile default 17) |
 | Seeed SenseCAP M1 | Raspberry Pi 4 (2/4/8 GB, SD-card boot) | WM1302/WM1303 (SX1302/SX1303) | `seeed_wm1302` |
 
 Both carry an ECC608 secure element whose Helium identity survives the
@@ -517,7 +517,7 @@ Each `entrypoint.sh` (POSIX sh, no Python dependency):
 
 | # | Device | Chipset | `CONC_MODEL` | Notes |
 |---|---|---|---|---|
-| 1 | MNTD. Blackspot (RAK V2) | SX1302 | `rak_2287` | decision 3 primary validation; ECC608 Helium identity |
+| 1 | MNTD. Blackspot (RAK V2) | SX1302 | `rak_2287` + `CONC_RESET_PIN=25` | decision 3 primary validation; ECC608 Helium identity; reset is GPIO25 (hm-pyhelper `rak-fl1`), without it the SX1302 wedges/receives garbage |
 | 2 | Seeed SenseCAP M1 | SX1302/03 | `seeed_wm1302` | second converted hotspot; ECC608 |
 | 3 | DIY: RPi 3B+ + RAK831 | SX1301 | `rak_2245` (no dedicated RAK831 profile; same SX1301 front-end — verify reset pin, override via `CONC_RESET_*`) | `GATEWAY_ID` from MAC (SX1301 has no chip EUI) |
 | 4 | DIY: RPi 3B+ + IMST iC880A | SX1301 | `imst_ic880a` | reset pin depends on backplane wiring (`CONC_RESET_*`) |
@@ -582,7 +582,8 @@ managing two.
    [Appendix B](#appendix-b-env-var-prefix-scheme-conc_mqtt_udp_mesh_helium_).
 3. ~~**Initial hardware validation target?**~~ **Decided: MNTD. Blackspot
    (RAK Hotspot Miner V2)** — Raspberry Pi 4 + RAK2287 (SX1302),
-   `CONC_CHIPSET=sx1302`, `CONC_MODEL=rak_2287`. Validates the ChirpStack
+   `CONC_CHIPSET=sx1302`, `CONC_MODEL=rak_2287`, `CONC_RESET_PIN=25`
+   (the board's SX1302 reset is GPIO25). Validates the ChirpStack
    chain, the hotspot conversion path, and the ECC608 Helium identity (D7) on
    one device.
 4. ~~**Dual-slot support?**~~ **Decided: not in the design.** A single

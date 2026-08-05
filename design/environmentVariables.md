@@ -27,7 +27,9 @@ A working ChirpStack gateway needs exactly these:
 
 Everything else has a working default. Add `MQTT_USERNAME`/`MQTT_PASSWORD`
 (and possibly `MQTT_CA_CERT`) if your broker requires them, and `GATEWAY_ID`
-if your concentrator has no usable chip EUI.
+if your concentrator has no usable chip EUI. Converted Helium hotspots may
+need `CONC_RESET_PIN` on top of `CONC_MODEL` (MNTD Blackspot / RAK Miner V2:
+`CONC_RESET_PIN=25`) — see the hardware table in the README.
 
 ## Host configuration (balena "Configuration" tab, not device variables)
 
