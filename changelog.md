@@ -23,7 +23,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
   missing reset, and the "marginal SPI" troubleshooting guidance derived
   from it (reseating, core-clock lock, module replacement) addressed
   symptoms, not the cause.** README/howto/variable docs updated
-  accordingly.
+  accordingly. Reported upstream:
+  [chirpstack-concentratord#286](https://github.com/chirpstack/chirpstack-concentratord/issues/286).
 
 **Validated on hardware**
 - Gateway mesh (border/relay): SenseCAP M1 as border gateway
