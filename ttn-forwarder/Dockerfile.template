@@ -25,7 +25,7 @@ ENV UDEV=off
 
 # libzmq5: runtime for the concentratord backend; ca-certificates: TLS to the
 # The Things Stack MQTT frontend (port 8881).
-RUN install_packages libzmq5 ca-certificates
+RUN install_packages libzmq5 ca-certificates netcat-openbsd
 
 COPY --from=build /src/target/release/chirpstack-ttn-mqtt-forwarder /usr/bin/chirpstack-ttn-mqtt-forwarder
 COPY ttn-forwarder/templates/ /opt/app/templates/

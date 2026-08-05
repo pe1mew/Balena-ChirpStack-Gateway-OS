@@ -23,6 +23,9 @@ FROM balenalib/%%BALENA_MACHINE_NAME%%-debian:bookworm-run
 
 ENV UDEV=off
 
+# netcat: startup gate on concentratord (zero-ID race mitigation).
+RUN install_packages netcat-openbsd
+
 COPY --from=fetch /out/chirpstack-gateway-mesh /usr/bin/chirpstack-gateway-mesh
 
 # Region mapping example configs from the submodule (static files).

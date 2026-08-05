@@ -23,6 +23,9 @@ FROM balenalib/%%BALENA_MACHINE_NAME%%-debian:bookworm-run
 
 ENV UDEV=off
 
+# netcat: startup gate on the mesh proxy (zero-ID race mitigation).
+RUN install_packages netcat-openbsd
+
 COPY --from=fetch /out/chirpstack-mqtt-forwarder /usr/bin/chirpstack-mqtt-forwarder
 COPY mqtt-forwarder/templates/ /opt/app/templates/
 COPY mqtt-forwarder/entrypoint.sh /opt/app/entrypoint.sh

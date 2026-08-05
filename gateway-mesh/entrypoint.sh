@@ -63,6 +63,21 @@ else
   export MESH_RELAY_LINE=""
 fi
 
+# ---- startup gate (zero-ID race mitigation, see howto troubleshooting) ------
+# Wait until concentratord's command API accepts connections before starting:
+# the mesh backend then obtains the real gateway ID on its first fetch, so the
+# proxy never serves an all-zero ID to the forwarders.
+wait_for() {
+  n=0
+  until nc -z -w 2 "$1" "$2" 2>/dev/null; do
+    n=$((n+1)); [ $((n % 15)) -eq 1 ] && log "waiting for $3 ($1:$2) ..."
+    sleep 2
+  done
+  sleep 3
+  log "$3 reachable"
+}
+wait_for concentratord 3002 "concentratord command API"
+
 # ---- start ------------------------------------------------------------------
 ROLE=$([ "$MESH_BORDER_GATEWAY" = "true" ] && echo border-gateway || echo relay)
 log "role=$ROLE region=$REGION freqs=$MESH_FREQS_TOML tx_power=$MESH_TX_POWER hops=$MESH_MAX_HOP_COUNT"

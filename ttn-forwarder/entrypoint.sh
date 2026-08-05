@@ -120,12 +120,24 @@ export TTN_DEV_ADDR_FILTER_TOML=$(to_toml_array "${TTN_FILTER_DEV_ADDR_PREFIXES:
 export TTN_JOIN_EUI_FILTER_TOML=$(to_toml_array "${TTN_FILTER_JOIN_EUI_PREFIXES:-}")
 
 # ---- backend: concentratord direct, or the gateway-mesh proxy API -----------
+# Mesh backend: wait for the proxy before starting (zero-ID race mitigation,
+# same rationale as in the mqtt-forwarder entrypoint).
+wait_for() {
+  n=0
+  until nc -z -w 2 "$1" "$2" 2>/dev/null; do
+    n=$((n+1)); [ $((n % 15)) -eq 1 ] && log "waiting for $3 ($1:$2) ..."
+    sleep 2
+  done
+  sleep 3
+  log "$3 reachable"
+}
 case "${TTN_BACKEND:-concentratord}" in
   concentratord)
     export TTN_EVENT_URL="tcp://concentratord:3001"
     export TTN_COMMAND_URL="tcp://concentratord:3002"
     ;;
   mesh)
+    wait_for gateway-mesh 3012 "gateway-mesh proxy API"
     export TTN_EVENT_URL="tcp://gateway-mesh:3011"
     export TTN_COMMAND_URL="tcp://gateway-mesh:3012"
     ;;

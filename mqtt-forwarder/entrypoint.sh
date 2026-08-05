@@ -65,12 +65,26 @@ export MQTT_DEV_ADDR_FILTER_TOML=$(to_toml_array "${MQTT_FILTER_DEV_ADDR_PREFIXE
 export MQTT_JOIN_EUI_FILTER_TOML=$(to_toml_array "${MQTT_FILTER_JOIN_EUI_PREFIXES:-}")
 
 # ---- backend: concentratord direct, or the gateway-mesh proxy API -----------
+# On the mesh backend, wait until the mesh proxy accepts connections before
+# starting (zero-ID race mitigation: the forwarder reads the gateway ID only
+# once; combined with the mesh's own concentratord gate this guarantees the
+# proxy knows the real ID by the time we ask).
+wait_for() {
+  n=0
+  until nc -z -w 2 "$1" "$2" 2>/dev/null; do
+    n=$((n+1)); [ $((n % 15)) -eq 1 ] && log "waiting for $3 ($1:$2) ..."
+    sleep 2
+  done
+  sleep 3
+  log "$3 reachable"
+}
 case "${MQTT_BACKEND:-concentratord}" in
   concentratord)
     export MQTT_EVENT_URL="tcp://concentratord:3001"
     export MQTT_COMMAND_URL="tcp://concentratord:3002"
     ;;
   mesh)
+    wait_for gateway-mesh 3012 "gateway-mesh proxy API"
     export MQTT_EVENT_URL="tcp://gateway-mesh:3011"
     export MQTT_COMMAND_URL="tcp://gateway-mesh:3012"
     ;;

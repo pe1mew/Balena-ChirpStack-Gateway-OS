@@ -9,6 +9,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 ## [Unreleased]
 
 **Fixed**
+- Zero-gateway-ID boot race on `MQTT_BACKEND=mesh` gateways (stack-level
+  mitigation): gateway-mesh now waits for concentratord's command API before
+  starting (so its first gateway-ID fetch succeeds and the proxy never serves
+  an all-zero ID), and the mqtt-/ttn-forwarders wait for the mesh proxy
+  before reading the ID. Verified with three consecutive restart trials on a
+  live border gateway (correct EUI on the first topic subscribe every time,
+  zero occurrences of the all-zero ID); rolled out to all fleets.
+  Root-cause fixes remain proposed upstream (gateway-mesh should not answer
+  before the ID is known and should re-fetch after backend reconnect;
+  forwarders should reject all-zero IDs).
+- concentratord entrypoint now **refuses `CONC_RESET_PIN`/`CONC_POWER_EN_PIN`
+  values 7–11** on the default GPIO chip: those are the SPI0 pads, and
+  claiming one re-muxes it away from the SPI controller, silently breaking
+  the concentrator bus until the device reboots. The error message explains
+  the usual cause — physical header pin numbers instead of GPIO offsets
+  (physical pin 11 = GPIO17, pin 22 = GPIO25; full translation table in
+  design/environmentVariables.md). `CONC_GPIO_FORCE=true` overrides for
+  boards that genuinely repurpose an SPI pad. Diagnosed on a live gateway
+  where `CONC_RESET_PIN=11` had hijacked the SPI clock line.
 - MNTD. Blackspot / RAK Hotspot Miner V2: the SX1302 reset is on **GPIO25**
   (Helium `hm-pyhelper` variant `rak-fl1`), not the `rak_2287` profile
   default GPIO17 — set `CONC_RESET_PIN=25`. Without it the chip is never
