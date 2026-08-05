@@ -59,6 +59,9 @@ if your concentrator has no usable chip EUI.
 | `CONC_RESET_PIN` | model default | reset line offset (GPIO character-device numbering, **not** physical pin) |
 | `CONC_POWER_EN_CHIP` | model default | SX1302 power-enable GPIO chip (models that support it) |
 | `CONC_POWER_EN_PIN` | model default | SX1302 power-enable line offset |
+| `CONC_POWER_CYCLE_PIN` | unset | entrypoint pulses this GPIO line **low** before each daemon start, power-cycling the concentrator module. For boards whose power gate defaults to on (MNTD/RAK Hotspot Miner V2: `18`) — an unclean concentratord stop otherwise wedges the SX1302/SX1250 in a state no reset pulse recovers (symptom: `chip version is 0x05`, `Failed to set SX1250_0 in STANDBY_RC mode`) |
+| `CONC_POWER_CYCLE_CHIP` | `gpiochip0` | GPIO chip for the power-cycle pulse (gpiod name, not `/dev/...` path) |
+| `CONC_POWER_CYCLE_SEC` | `1` | power-cycle pulse duration in seconds |
 | `CONC_GNSS_DEV_PATH` | model default | GNSS serial device, e.g. `/dev/ttyAMA0`; empty string disables GNSS. **GPS is intentionally unsupported in this project** (design D9) — the variable passes through for experimenters only |
 | `CONC_I2C_DEV_PATH` | model default | i2c device for the temperature sensor |
 | `CONC_STATS_INTERVAL` | `30s` | stats publish interval (humantime format) |

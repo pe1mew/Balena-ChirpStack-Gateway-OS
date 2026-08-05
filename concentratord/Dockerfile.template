@@ -32,7 +32,9 @@ FROM balenalib/%%BALENA_MACHINE_NAME%%-debian:bookworm-run
 ENV UDEV=on
 
 # wget: used by the entrypoint for the supervisor-API MAC lookup (sx1301).
-RUN install_packages wget
+# gpiod: used by the entrypoint for the optional module power-cycle pulse
+# (CONC_POWER_CYCLE_PIN, e.g. MNTD/RAK Hotspot Miner V2).
+RUN install_packages wget gpiod
 
 COPY --from=fetch /out/ /usr/bin/
 
