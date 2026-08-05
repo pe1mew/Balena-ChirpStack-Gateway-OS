@@ -9,6 +9,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 ## [Unreleased]
 
 **Fixed**
+- ttn-forwarder updated to chirpstack-ttn-mqtt-forwarder **v0.2.1**: rejects
+  an all-zero gateway ID from the backend (keeps retrying instead of
+  adopting it) — the forwarder-side defense for the zero-ID race below.
+  Verified on hardware: normal-path ID acquisition and TTN connection
+  unaffected; rejection path never triggered with the startup gates active.
 - Zero-gateway-ID boot race on `MQTT_BACKEND=mesh` gateways (stack-level
   mitigation): gateway-mesh now waits for concentratord's command API before
   starting (so its first gateway-ID fetch succeeds and the proxy never serves
