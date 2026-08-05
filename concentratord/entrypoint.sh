@@ -84,6 +84,26 @@ case "$CONC_CHIPSET" in
   sx1302) RESET_PREFIX="sx1302" ;;
   2g4)    RESET_PREFIX="mcu" ;;
 esac
+
+# Guard: GPIO7-11 on the main gpiochip are the SPI0 pads (CE1, CE0, MISO,
+# MOSI, SCLK). Claiming one as a reset/power pin re-muxes it away from the
+# SPI controller and silently breaks the concentrator bus UNTIL THE DEVICE
+# REBOOTS (container restarts do not restore pin muxing). This mistake
+# usually comes from physical-pin numbering: physical header pin 11 = GPIO17,
+# pin 22 = GPIO25 (validated on a live gateway — see howto troubleshooting).
+check_gpio_pin() {
+  # $1 = variable name, $2 = value, $3 = chip (empty means default gpiochip0)
+  case "${3:-/dev/gpiochip0}" in */gpiochip0) ;; *) return 0 ;; esac
+  case "$2" in
+    7|8|9|10|11)
+      [ "${CONC_GPIO_FORCE:-false}" = "true" ] && { log "WARNING: $1=$2 is an SPI0 pad — forced by CONC_GPIO_FORCE"; return 0; }
+      die "$1=$2 is an SPI0 pad (GPIO7-11) and would disconnect the concentrator's SPI bus until reboot. GPIO line offsets are NOT physical header pins (physical pin 11 = GPIO17, pin 22 = GPIO25). If GPIO$2 is genuinely correct for your board, set CONC_GPIO_FORCE=true."
+      ;;
+  esac
+}
+[ -n "${CONC_RESET_PIN:-}" ] && check_gpio_pin CONC_RESET_PIN "$CONC_RESET_PIN" "${CONC_RESET_CHIP:-}"
+[ -n "${CONC_POWER_EN_PIN:-}" ] && check_gpio_pin CONC_POWER_EN_PIN "$CONC_POWER_EN_PIN" "${CONC_POWER_EN_CHIP:-}"
+
 [ -n "${CONC_RESET_CHIP:-}" ] && OPT="$OPT${nl}  ${RESET_PREFIX}_reset_chip = \"$CONC_RESET_CHIP\""
 [ -n "${CONC_RESET_PIN:-}" ]  && OPT="$OPT${nl}  ${RESET_PREFIX}_reset_pin = $CONC_RESET_PIN"
 if [ "$CONC_CHIPSET" = "sx1302" ]; then

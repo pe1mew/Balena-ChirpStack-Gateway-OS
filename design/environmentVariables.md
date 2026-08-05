@@ -58,7 +58,7 @@ need `CONC_RESET_PIN` on top of `CONC_MODEL` (MNTD Blackspot / RAK Miner V2:
 | `CONC_LORAWAN_PUBLIC` | `true` | public/private LoRaWAN sync word |
 | `CONC_COM_DEV_PATH` | model default | override `/dev/spidevX.Y` (SPI) or `/dev/ttyACMx` (USB) |
 | `CONC_RESET_CHIP` | model default | GPIO chip device for the reset line, e.g. `/dev/gpiochip0` |
-| `CONC_RESET_PIN` | model default | reset line offset (GPIO character-device numbering, **not** physical pin). Converted Helium hotspots often differ from the vendor-HAT default: MNTD Blackspot / RAK Miner V2 = `25` |
+| `CONC_RESET_PIN` | model default | reset line offset — **GPIO/BCM numbering, not physical header pins!** Translation of the classic (resin-era, physical) values: pin 11→`17`, pin 22→`25`, pin 15→`22`, pin 26→`7`, pin 29→`5`. Converted Helium hotspots often differ from the vendor-HAT default: MNTD Blackspot / RAK Miner V2 = `25`. GPIO 7–11 are the SPI0 pads and are refused by the entrypoint — claiming one silently breaks the SPI bus **until reboot** (`CONC_GPIO_FORCE=true` overrides for exotic boards) |
 | `CONC_POWER_EN_CHIP` | model default | SX1302 power-enable GPIO chip (models that support it) |
 | `CONC_POWER_EN_PIN` | model default | SX1302 power-enable line offset |
 | `CONC_GNSS_DEV_PATH` | model default | GNSS serial device, e.g. `/dev/ttyAMA0`; empty string disables GNSS. **GPS is intentionally unsupported in this project** (design D9) — the variable passes through for experimenters only |
@@ -205,3 +205,28 @@ secure element → supplied swarm key → generated keypair) and passes all othe
 - **Mesh relay:** `MESH_ENABLED=true`, `MESH_ROOT_KEY=<fleet key>`.
 - **Mesh border gateway:** relay set + `MESH_BORDER_GATEWAY=true`,
   `MQTT_BACKEND=mesh`.
+
+## Verified hardware configurations
+
+Settings for the hardware combinations verified on real devices (add the
+forwarder recipe of your choice from above):
+
+- **MNTD./RAK Hotspot Miner V2** (Blackspot/Goldspot; Pi 4 + RAK2287):
+  `CONC_MODEL=rak_2287`, **`CONC_RESET_PIN=25`** (the Miner V2 carrier wires
+  the SX1302 reset to GPIO25 — hm-pyhelper `rak-fl1` — not the profile's
+  GPIO17 default; without it the chip runs from stale state and mimics a
+  defective module). Check the first `Gateway ID retrieved` log line: if the
+  chip EUI reads `ffffffffffffffff` (unprogrammed, seen on the Blackspot),
+  set `GATEWAY_ID`. Device config: `core_freq=500` + `core_freq_min=500`.
+- **Seeed SenseCAP M1** (Pi 4 + WM1302/03): `CONC_MODEL=seeed_wm1302` —
+  profile defaults are correct (reset 17, power-enable 18); chip EUI is
+  factory-programmed, no `GATEWAY_ID` needed. Device config: `core_freq=500` + `core_freq_min=500`.
+- **RAK831 on Pi 3B+** (pin-11/ch2i-style reset wiring):
+  `CONC_CHIPSET=sx1301`, `CONC_MODEL=rak_2245` (no dedicated RAK831 profile;
+  same SX1301 front-end, reset default GPIO17 = physical pin 11). EUI is
+  MAC-derived automatically.
+- **IMST iC880A on Pi 3B+**: `CONC_CHIPSET=sx1301`,
+  `CONC_MODEL=imst_ic880a`, `CONC_RESET_PIN` per backplane — `17` for
+  pin-11/ch2i wiring (verified), `25` for Gonzalo Casas/Coredump, profile
+  default `5` for IMST Lite Gateway/LinkLabs. EUI is MAC-derived
+  automatically.
