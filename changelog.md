@@ -86,3 +86,6 @@ balenaCloud, plus Helium support.
   (ECC608 identity preserved through the balenaOS conversion).
 - MNTD. Blackspot: stack validated; unit's RAK2287 module found defective
   (SPI read corruption) — diagnosis procedure documented in the howto.
+  *(Retracted — the module was fine; the symptom was the missing GPIO25
+  reset. See the Fixed entry above and
+  [chirpstack-concentratord#286](https://github.com/chirpstack/chirpstack-concentratord/issues/286).)*
