@@ -8,6 +8,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 
 ## [Unreleased]
 
+**Documentation**
+- Deployment guide: repurposing a legacy balena fleet requires unpinning it
+  from its historic release first — against a pinned fleet a push builds but
+  never deploys, and `env set --service` for a service that only exists in
+  the new release fails silently (CLI validates against the pinned target
+  release). Encountered live while enrolling a 2018-era fleet.
+- Troubleshooting: ttn-forwarder `NotAuthorized` on one connection slot
+  while others work — The Things Stack gateway keys are per cluster/tenant;
+  a community-cluster key is not valid on a The Things Industries tenant.
+  Disable the slot or issue a key on that cluster (Packet Broker covers
+  same-backbone tenants either way).
+
 **Fixed**
 - ttn-forwarder updated to chirpstack-ttn-mqtt-forwarder **v0.2.1**: rejects
   an all-zero gateway ID from the backend (keeps retrying instead of
@@ -21,9 +33,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
   before reading the ID. Verified with three consecutive restart trials on a
   live border gateway (correct EUI on the first topic subscribe every time,
   zero occurrences of the all-zero ID); rolled out to all fleets.
-  Root-cause fixes remain proposed upstream (gateway-mesh should not answer
-  before the ID is known and should re-fetch after backend reconnect;
-  forwarders should reject all-zero IDs).
+  Root-cause fixes reported upstream:
+  [chirpstack-gateway-mesh#130](https://github.com/chirpstack/chirpstack-gateway-mesh/issues/130)
+  (do not answer before the ID is known; re-fetch after backend reconnect)
+  and
+  [chirpstack-mqtt-forwarder#73](https://github.com/chirpstack/chirpstack-mqtt-forwarder/issues/73)
+  (reject all-zero IDs).
 - concentratord entrypoint now **refuses `CONC_RESET_PIN`/`CONC_POWER_EN_PIN`
   values 7–11** on the default GPIO chip: those are the SPI0 pads, and
   claiming one re-muxes it away from the SPI controller, silently breaking

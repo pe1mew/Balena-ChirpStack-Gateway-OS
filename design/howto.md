@@ -47,6 +47,18 @@ balena push myfleet
 The builders fetch the version+SHA-256-pinned ChirpStack binaries (design
 decision D8) — the build takes a few minutes, no Rust compilation involved.
 
+When repurposing an **existing (legacy) fleet**, check that it tracks the
+latest release before pushing: old fleets are often **pinned** to a historic
+release (dashboard → fleet → Releases, or `should_track_latest_release` in
+the API). Against a pinned fleet a push builds successfully but never
+deploys — devices keep downloading the old release — and, more subtly,
+`balena env set --service <name>` for a service that only exists in the new
+release **fails silently**, because the CLI validates service names against
+the pinned target release. Unpin (track latest) first, then push, then set
+service-scoped variables. Also sweep the legacy fleet's own old fleet-level
+environment variables: scoped to the old release's service names they are
+inert, but they clutter every device view.
+
 ## 4. Prepare the MNTD. Blackspot
 
 1. Open the enclosure and remove the microSD card.
@@ -133,10 +145,12 @@ Troubleshooting:
 | `chip version is 0x00/0x05` (expected `0x10`), `Failed to set SX1250_0 in STANDBY_RC`, or floods of `wrong coding rate (0)` / `syncword not found` with `rx_received_ok` stuck at `0` | **wrong reset pin** — the SX1302 is never reset, so it starts from stale state (on converted Helium hotspots the reset is often NOT on the vendor-HAT default: MNTD Blackspot / RAK Miner V2 = GPIO25, set `CONC_RESET_PIN=25`; check the Helium `hm-pyhelper` hardware definitions for other models). With the wrong pin the wedge survives every software restart and warm reboot — only a physical power cycle clears it, which misleads toward hardware diagnoses. Only after the reset pin is verified correct: reseat the module, lock the core clock (`BALENA_HOST_CONFIG_core_freq=500` + `core_freq_min=500`), and test on a second Pi (the earlier "defective Blackspot RAK2287" conclusion was this exact misdiagnosis — the module was fine) |
 | stack "works" under ChirpStack Gateway OS but "fails" on Balena with the same symptoms | possibly no difference at all: Gateway OS discards the HAL's stdout, so `syncword not found` floods are invisible there — compare the `rx_received` stats counters instead (permanently `0` in an active region = same corrupt RX path) |
 | gateway ID reads `ffffffffffffffff` | this SX1302's EUI register is unprogrammed — set `GATEWAY_ID` explicitly (16 hex chars) |
-| MQTT topics show gateway `0000000000000000` | boot race on `MQTT_BACKEND=mesh` gateways: the mqtt-forwarder read the gateway ID from the mesh proxy before it was known, and it only reads once. **Restart gateway-mesh first, then mqtt-forwarder** — the mesh's own backend can also be stuck at zeros (its concentratord command loop does not re-fetch the ID after an early failure), in which case restarting only the mqtt-forwarder reproduces the zeros. A fix belongs upstream: the mesh proxy should not answer zeros before its backend is ready, and should re-fetch after backend recovery |
+| MQTT topics show gateway `0000000000000000` | boot race on `MQTT_BACKEND=mesh` gateways: the mqtt-forwarder read the gateway ID from the mesh proxy before it was known, and it only reads once. **Restart gateway-mesh first, then mqtt-forwarder** — the mesh's own backend can also be stuck at zeros (its concentratord command loop does not re-fetch the ID after an early failure), in which case restarting only the mqtt-forwarder reproduces the zeros. Reported upstream: [chirpstack-gateway-mesh#130](https://github.com/chirpstack/chirpstack-gateway-mesh/issues/130), [chirpstack-mqtt-forwarder#73](https://github.com/chirpstack/chirpstack-mqtt-forwarder/issues/73). Since release rev13+ the startup gates in the entrypoints prevent this race |
 | literal `$VAR` text in an error | variable referenced in a template without an entrypoint default — report as bug |
 | `no channels file for CHANNEL_PLAN=…` | typo in `CHANNEL_PLAN`, or plan not supported by the chipset (the error lists what is available) |
 | MQTT connect errors | `MQTT_SERVER` scheme/port, credentials, or missing `MQTT_CA_CERT` |
+| ttn-forwarder `[connN] … Connection refused, return code: NotAuthorized` on one slot while other slots work | The Things Stack gateway keys are **per cluster/tenant** — an `NNSXS.…` key issued by the community cluster (`eu1.cloud.thethings.network`) is not valid on a The Things Industries tenant (`<tenant>.eu1.cloud.thethings.industries`) or vice versa. Issue a gateway API key on the cluster that slot points to, or disable the slot (`TTN_CONNECTION_ENABLED_n=false`); a tenant on the same backbone still receives the traffic via Packet Broker |
+| after a fleet move/push the device downloads the **old** release (e.g. a single legacy service) | the fleet is pinned to a historic release — see the note in section 3 (unpin, then re-set any service-scoped variables that were applied while pinned) |
 | gateway never *seen* in ChirpStack | EUI mismatch (re-check logs) or wrong region topic prefix vs ChirpStack region configuration |
 
 ## 8. Building for an aarch64 fleet
