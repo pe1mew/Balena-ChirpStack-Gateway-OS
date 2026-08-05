@@ -8,6 +8,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 
 ## [Unreleased]
 
+**Fixed**
+- MNTD. Blackspot / RAK Hotspot Miner V2: the SX1302 reset is on **GPIO25**
+  (Helium `hm-pyhelper` variant `rak-fl1`), not the `rak_2287` profile
+  default GPIO17 — set `CONC_RESET_PIN=25`. Without it the chip is never
+  reset: units wedge with `chip version is 0x05` / `Failed to set SX1250_0
+  in STANDBY_RC` after any service restart (recoverable only by physical
+  power cycle), and runs that do come up receive only corrupt frames
+  (`wrong coding rate (0)` flood, `rx_received_ok` = 0). Verified on
+  hardware: with `CONC_MODEL=rak_2287` + `CONC_RESET_PIN=25` starts,
+  restarts, and reception (uplinks decoding, zero garbage triggers) are all
+  clean. **This retracts the earlier "unit's RAK2287 module found
+  defective" conclusion below — that module was a victim of the same
+  missing reset, and the "marginal SPI" troubleshooting guidance derived
+  from it (reseating, core-clock lock, module replacement) addressed
+  symptoms, not the cause.** README/howto/variable docs updated
+  accordingly.
+
 **Validated on hardware**
 - Gateway mesh (border/relay): SenseCAP M1 as border gateway
   (`MESH_BORDER_GATEWAY=true`, `MQTT_BACKEND=mesh`) receiving and unwrapping

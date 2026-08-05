@@ -92,21 +92,6 @@ if [ "$CONC_CHIPSET" = "sx1302" ]; then
 fi
 export CONC_OPTIONAL_LINES="$OPT"
 
-# ---- optional module power-cycle --------------------------------------------
-# On boards where a GPIO gates the concentrator module's power rail and the
-# gate defaults to on (e.g. MNTD/RAK Hotspot Miner V2: GPIO18), an unclean
-# concentratord stop can leave the SX1302/SX1250 in a state that no reset
-# pulse recovers — only removing module power does. Pulsing the gate low
-# before every daemon start makes each start a clean power-on.
-if [ -n "${CONC_POWER_CYCLE_PIN:-}" ]; then
-  PC_CHIP="${CONC_POWER_CYCLE_CHIP:-gpiochip0}"
-  PC_SEC="${CONC_POWER_CYCLE_SEC:-1}"
-  log "power-cycling concentrator module: $PC_CHIP pin $CONC_POWER_CYCLE_PIN low for ${PC_SEC}s"
-  gpioset --mode=time --sec="$PC_SEC" "$PC_CHIP" "$CONC_POWER_CYCLE_PIN"=0 \
-    || log "WARNING: power-cycle pulse failed (continuing)"
-  sleep 1  # let the module's rails and TCXO settle after power returns
-fi
-
 # ---- start ------------------------------------------------------------------
 log "chipset=$CONC_CHIPSET model=$CONC_MODEL flags=$CONC_FLAGS_TOML plan=$PLAN region=$CONC_REGION"
 log "gateway_id=${GATEWAY_ID:-<chip EUI>}"

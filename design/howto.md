@@ -60,10 +60,15 @@ decision D8) — the build takes a few minutes, no Rust compilation involved.
 The unit's Helium identity in the ECC608 is untouched by this step (design
 D7); it is not used by the phase-1 stack.
 
-Validated on hardware: the Blackspot is a Pi 4 + the standard **RAK2287 Pi
-HAT**, so the default `rak_2287` profile (reset GPIO17, no power-enable) is
-correct — do not override the pins. If the concentrator misbehaves after the
-SD swap, reseat the RAK2287 mini-PCIe module first (see troubleshooting).
+Validated on hardware: the Blackspot's concentrator board is **not** wired
+like the retail RAK2287 Pi HAT — the SX1302 reset is on **GPIO25** (per the
+Helium `hm-pyhelper` hardware definitions, variant `rak-fl1`), not GPIO17.
+Set `CONC_RESET_PIN=25` alongside `CONC_MODEL=rak_2287`. Without it the chip
+is never actually reset: starts from stale state wedge with `chip version is
+0x05` / `Failed to set SX1250_0 in STANDBY_RC`, and even a run that comes up
+receives only garbage (`rx_received` high, `rx_received_ok` 0). There is no
+power-enable GPIO on this board; a wedged module recovers only by removing
+power (or, with the correct reset pin, by the next service start).
 
 ## 5. Configure host and device variables
 
@@ -83,6 +88,7 @@ Minimum set for the Blackspot on EU868 forwarding to your ChirpStack:
 | Variable | Value | Notes |
 |---|---|---|
 | `CONC_MODEL` | `rak_2287` | **required** |
+| `CONC_RESET_PIN` | `25` | **required on the Blackspot** — its SX1302 reset is GPIO25, not the profile default GPIO17 (see section 4) |
 | `MQTT_SERVER` | e.g. `ssl://chirpstack.example.net:8883` or `tcp://…:1883` | **required** |
 | `MQTT_USERNAME` / `MQTT_PASSWORD` | as needed | only if the broker requires auth |
 | `MQTT_CA_CERT` | PEM content | only for TLS with a private CA |
@@ -123,7 +129,7 @@ Troubleshooting:
 | Symptom | Likely cause |
 |---|---|
 | `failed to start the concentrator` | SPI not enabled (host config), wrong `CONC_MODEL`, or reset-pin mismatch (`CONC_RESET_CHIP`/`CONC_RESET_PIN` override) |
-| `chip version is 0x00/0x05` (expected `0x10`), `Failed to set SX1250_0 in STANDBY_RC`, or floods of `syncword not found` | marginal SPI connection. In order: power off and **reseat the concentrator module in the mini-PCIe slot** and the HAT on the 40-pin header; lock the Pi 4 core clock (`BALENA_HOST_CONFIG_core_freq=500` + `core_freq_min=500`); if it persists, **test the module on a second Pi** — if the corruption follows the module, the module/HAT is defective (seen on an MNTD Blackspot RAK2287) and needs replacement |
+| `chip version is 0x00/0x05` (expected `0x10`), `Failed to set SX1250_0 in STANDBY_RC`, or floods of `wrong coding rate (0)` / `syncword not found` with `rx_received_ok` stuck at `0` | **wrong reset pin** — the SX1302 is never reset, so it starts from stale state (on converted Helium hotspots the reset is often NOT on the vendor-HAT default: MNTD Blackspot / RAK Miner V2 = GPIO25, set `CONC_RESET_PIN=25`; check the Helium `hm-pyhelper` hardware definitions for other models). With the wrong pin the wedge survives every software restart and warm reboot — only a physical power cycle clears it, which misleads toward hardware diagnoses. Only after the reset pin is verified correct: reseat the module, lock the core clock (`BALENA_HOST_CONFIG_core_freq=500` + `core_freq_min=500`), and test on a second Pi (the earlier "defective Blackspot RAK2287" conclusion was this exact misdiagnosis — the module was fine) |
 | stack "works" under ChirpStack Gateway OS but "fails" on Balena with the same symptoms | possibly no difference at all: Gateway OS discards the HAL's stdout, so `syncword not found` floods are invisible there — compare the `rx_received` stats counters instead (permanently `0` in an active region = same corrupt RX path) |
 | gateway ID reads `ffffffffffffffff` | this SX1302's EUI register is unprogrammed — set `GATEWAY_ID` explicitly (16 hex chars) |
 | literal `$VAR` text in an error | variable referenced in a template without an entrypoint default — report as bug |

@@ -38,7 +38,7 @@ combinations were **verified** on real hardware with this stack:
 
 | Device | Board | Concentrator | `CONC_MODEL` | Notes |
 |---|---|---|---|---|
-| MNTD./RAK Hotspot Miner V2 | Raspberry Pi 4 | RAK2287 (SX1302) | `rak_2287` | converted Helium hotspot |
+| MNTD./RAK Hotspot Miner V2 | Raspberry Pi 4 | RAK2287 (SX1302) | `rak_2287` | converted Helium hotspot; **also set `CONC_RESET_PIN=25`** — the board's SX1302 reset is GPIO25, not the profile default 17 |
 | Seeed SenseCAP M1 | Raspberry Pi 4 | WM1302/03 (SX1302/03) | `seeed_wm1302` | converted Helium hotspot |
 | DIY: RAK831 | Raspberry Pi 3B+ | RAK831 (SX1301) | `rak_2245` | no dedicated RAK831 profile — the `rak_2245` profile matches (same SX1301 front-end); reset default GPIO17 |
 | DIY: IMST iC880A | Raspberry Pi 3B+ | iC880A (SX1301) | `imst_ic880a` | set `CONC_RESET_PIN` to match the backplane wiring (e.g. `17` for pin-11/ch2i style, `25` for Gonzalo Casas/Coredump) |
