@@ -30,17 +30,24 @@ project) are compiled from their submodules.
 
 ## Supported hardware
 
-Any Raspberry Pi supported by balenaOS with a concentrator shield supported by
-concentratord (iC880A, RAK2245/2247/2287, RAK5146, Seeed WM1302, Semtech
-CoreCell, and more). This includes converted Helium hotspots:
+**Supported** is defined by chirpstack-concentratord: any Raspberry Pi that
+balenaOS runs on, with any concentrator model in concentratord's vendor list
+(iC880A, RAK2245/2246/2247/2287/5146, Seeed WM1302, Semtech CoreCell,
+2.4 GHz variants, and more — set via `CONC_MODEL`). The following
+combinations were **verified** on real hardware with this stack:
 
-| Device | Board | Concentrator | `CONC_MODEL` |
-|---|---|---|---|
-| MNTD./RAK Hotspot Miner V2 | Raspberry Pi 4 | RAK2287 (SX1302) | `rak_2287` |
-| Seeed SenseCAP M1 | Raspberry Pi 4 | WM1302/03 (SX1302/03) | `seeed_wm1302` |
+| Device | Board | Concentrator | `CONC_MODEL` | Notes |
+|---|---|---|---|---|
+| MNTD./RAK Hotspot Miner V2 | Raspberry Pi 4 | RAK2287 (SX1302) | `rak_2287` | converted Helium hotspot |
+| Seeed SenseCAP M1 | Raspberry Pi 4 | WM1302/03 (SX1302/03) | `seeed_wm1302` | converted Helium hotspot |
+| DIY: RAK831 | Raspberry Pi 3B+ | RAK831 (SX1301) | `rak_2245` | no dedicated RAK831 profile — the `rak_2245` profile matches (same SX1301 front-end); reset default GPIO17 |
+| DIY: IMST iC880A | Raspberry Pi 3B+ | iC880A (SX1301) | `imst_ic880a` | set `CONC_RESET_PIN` to match the backplane wiring (e.g. `17` for pin-11/ch2i style, `25` for Gonzalo Casas/Coredump) |
 
 On converted hotspots the Helium identity in the ECC608 secure element
-survives the conversion and is used by gateway-rs automatically.
+survives the conversion and is used by gateway-rs automatically. On SX1301
+boards (RAK831, iC880A) the gateway EUI is derived from the Pi's MAC address
+(`xxxxxxFFFExxxxxx`) — the same derivation the classic resin-era stack used,
+so existing registrations keep their EUI.
 
 ## Getting started
 
