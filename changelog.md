@@ -8,6 +8,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 
 ## [Unreleased]
 
+**Changed**
+- ttn-forwarder updated to chirpstack-ttn-mqtt-forwarder
+  [**v0.3.0**](https://github.com/pe1mew/chirpstack-ttn-mqtt-forwarder/releases/tag/v0.3.0):
+  resilience for lossy backhaul (4G sites). The per-connection event buffer
+  now evicts the oldest event when full, coalesces stats to at most one
+  queued, and discards events older than a configurable maximum age at
+  publish time; a reconnect deadlock after long outages is fixed. New
+  per-connection variables `TTN_QUEUE_SIZE(_n)` (default `100`) and
+  `TTN_EVENT_MAX_AGE(_n)` (default `5m`) are rendered by the entrypoint.
+  Field-validated on rfsee-welgelegen with a forced WAN outage: bounded
+  queueing during the outage, a single clean reconnect, no stale-uplink
+  flood, no stall. For frequently-degraded links a lower
+  `TTN_RECONNECT_MAX` (e.g. `1m`) shortens worst-case recovery lag after
+  the backoff has grown.
+
 **Documentation**
 - Deployment guide: repurposing a legacy balena fleet requires unpinning it
   from its historic release first — against a pinned fleet a push builds but
