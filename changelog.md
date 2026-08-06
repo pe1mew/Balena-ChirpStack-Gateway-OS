@@ -66,6 +66,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
   [chirpstack-concentratord#286](https://github.com/chirpstack/chirpstack-concentratord/issues/286).
 
 **Validated on hardware**
+- helium-gateway supplied-swarm-key identity (design D7, priority 2):
+  verified on a gateway without a secure element — the base64-supplied key
+  is adopted and the original onboarded hotspot identity comes up. With
+  this, all three D7 identity sources (ECC608, supplied swarm key,
+  generated keypair) are hardware-verified.
 - Gateway mesh (border/relay): SenseCAP M1 as border gateway
   (`MESH_BORDER_GATEWAY=true`, `MQTT_BACKEND=mesh`) receiving and unwrapping
   MIC-valid relayed uplinks (hop count 1) from a **RAK7269v2 running stock

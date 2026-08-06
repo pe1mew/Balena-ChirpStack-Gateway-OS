@@ -210,6 +210,36 @@ identity source it selected and the public key — verify the reported hotspot
 name against the Helium explorer (validated on a SenseCAP M1: the original
 onboarded identity resumed working with no onboarding steps).
 
+**Supplying an existing miner/swarm key.** The key file from an original
+Helium miner (`swarm_key`, sometimes `gateway_key.bin`/`keypair.bin`) is
+binary — base64-encode it to fit in a variable:
+
+```bash
+base64 -w0 swarm_key
+```
+
+or on Windows (PowerShell — note `[IO.File]` resolves relative paths against
+the *process* working directory, so resolve the path first):
+
+```powershell
+[Convert]::ToBase64String([IO.File]::ReadAllBytes((Resolve-Path ".\swarm_key").Path))
+```
+
+Set the output as a **device service variable** on `helium-gateway` (it is a
+private key — never fleet-wide, never in a repo):
+
+```bash
+balena env set HELIUM_SWARM_KEY <base64> --device <uuid> --service helium-gateway
+```
+
+The ECC608 probe has priority: on hardware with a working secure element the
+supplied key is ignored unless you also set `HELIUM_ECC=false` (skips the
+probe). On DIY hardware without a secure element no extra setting is needed.
+Verify in the logs: `[entrypoint] identity: supplied swarm key …` followed by
+a `key info` line whose hotspot name should match the Helium explorer. Make
+sure the original miner is permanently off before going live — two radios on
+one identity invalidate each other's sessions.
+
 PoC beaconing is disabled by default (`GW_POC_DISABLE=true` set by the
 entrypoint) — Helium PoC beaconing is sunset. This stops beacon
 transmissions and witness reports; note that gateway-rs v1.3.0 still runs
