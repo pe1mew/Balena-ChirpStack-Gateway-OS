@@ -130,6 +130,8 @@ Per connection (`n` = `0`–`3`):
 | `TTN_TLS_ENABLED_n` | `false` | TLS to this endpoint; system CA bundle unless a CA is supplied |
 | `TTN_CA_CERT_n` | empty | CA certificate **PEM content** (not a path) for private endpoints |
 | `TTN_KEEP_ALIVE_n` / `TTN_RECONNECT_MAX_n` | `20s` / `5m` (or the unsuffixed globals) | MQTT keep-alive / max reconnect backoff |
+| `TTN_QUEUE_SIZE_n` | `100` (or the unsuffixed global) | per-connection event buffer depth; when the connection is stalled and the buffer is full the **oldest** event is evicted |
+| `TTN_EVENT_MAX_AGE_n` | `5m` (or the unsuffixed global) | buffered events older than this are discarded instead of published after an outage (stale uplinks are useless upstream); `0s` disables |
 
 Shared across all connections:
 
@@ -146,6 +148,8 @@ Shared across all connections:
 | `TTN_LATITUDE` / `TTN_LONGITUDE` / `TTN_ALTITUDE` | `0.0` / `0.0` / `0` | static location when concentratord provides none (GNSS) |
 | `TTN_KEEP_ALIVE` | `20s` | MQTT keep-alive |
 | `TTN_RECONNECT_MAX` | `5m` | maximum reconnect backoff |
+| `TTN_QUEUE_SIZE` | `100` | default per-connection event buffer depth |
+| `TTN_EVENT_MAX_AGE` | `5m` | default maximum queued-event age |
 | `TTN_LOG_LEVEL` | `info` | log level |
 
 Note: with multiple connections every network receives all uplinks and each
