@@ -5,6 +5,7 @@
 # stay out of the upload to the balena builders.
 *
 !docker-compose.yml
+!balena.yml
 !concentratord
 !mqtt-forwarder
 !udp-forwarder
