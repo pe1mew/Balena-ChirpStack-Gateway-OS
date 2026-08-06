@@ -87,6 +87,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
   [chirpstack-concentratord#286](https://github.com/chirpstack/chirpstack-concentratord/issues/286).
 
 **Validated on hardware**
+- All three forwarders running concurrently on one gateway (iC880A on
+  Pi 3B+): mqtt-forwarder over the mesh backend, ttn-forwarder, and the
+  udp-forwarder with multiple configured server slots — one slot active,
+  one parked with `UDP_SERVER_ENABLED_n=false` for later activation —
+  all publishing under the same gateway ID in production.
 - helium-gateway supplied-swarm-key identity (design D7, priority 2):
   verified on a gateway without a secure element — the base64-supplied key
   is adopted and the original onboarded hotspot identity comes up. With
