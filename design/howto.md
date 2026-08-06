@@ -44,6 +44,13 @@ From the repository root (replace `myfleet` with your fleet name):
 balena push myfleet
 ```
 
+Releases are versioned from `balena.yml` (`version:` field): the dashboard
+shows e.g. `1.0.0` instead of an opaque `0.0.0+revN`, and the same source
+pushed to different fleets carries the same version — so "which version runs
+where" is readable per device/fleet. When cutting a release, bump the
+version in `balena.yml` together with the changelog; re-pushing the same
+version gets an automatic `+revN` suffix.
+
 The builders fetch the version+SHA-256-pinned ChirpStack binaries (design
 decision D8) — the build takes a few minutes, no Rust compilation involved.
 

@@ -8,6 +8,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 
 ## [Unreleased]
 
+**Added**
+- Release versioning via `balena.yml` (`version:` field): balena releases
+  now carry a semantic version (starting at **1.0.0**) instead of the
+  opaque `0.0.0+revN`, consistent across fleets for identical source. Bump
+  the version together with the changelog when cutting a release.
+
 **Changed**
 - ttn-forwarder updated to chirpstack-ttn-mqtt-forwarder
   [**v0.3.0**](https://github.com/pe1mew/chirpstack-ttn-mqtt-forwarder/releases/tag/v0.3.0):

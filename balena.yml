@@ -1,0 +1,9 @@
+name: Balena-ChirpStack-Gateway-OS
+type: sw.application
+# Release version: stamped onto every balena push (dashboard shows e.g.
+# "1.0.0" instead of an opaque 0.0.0+revN). Bump this together with the
+# changelog when cutting a release — identical source pushed to any fleet
+# then carries the same version, making "which version runs where" readable
+# from the device/fleet dashboard. Repeat pushes of the same version get a
+# +revN suffix automatically.
+version: 1.0.0
