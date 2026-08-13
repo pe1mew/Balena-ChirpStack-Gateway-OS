@@ -15,6 +15,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
   the version together with the changelog when cutting a release.
 
 **Changed**
+- gateway-mesh updated to upstream **v4.1.4** and mqtt-forwarder to
+  **v4.6.1** (version + SHA-256 pins updated for armv7hf; arm64 hashes in
+  the howto): the first releases containing the upstream fixes for the
+  zero-gateway-ID race we reported
+  ([chirpstack-gateway-mesh#130](https://github.com/chirpstack/chirpstack-gateway-mesh/issues/130):
+  backend set up before the proxy, so the command socket only exists once
+  the real gateway ID is cached;
+  [chirpstack-mqtt-forwarder#73](https://github.com/chirpstack/chirpstack-mqtt-forwarder/issues/73):
+  an all-zero gateway ID is rejected and retried). The race is now fixed
+  at the root; the startup gates in the entrypoints are kept as defense in
+  depth and to reduce restart noise.
 - ttn-forwarder updated to chirpstack-ttn-mqtt-forwarder
   [**v0.3.0**](https://github.com/pe1mew/chirpstack-ttn-mqtt-forwarder/releases/tag/v0.3.0):
   resilience for lossy backhaul (4G sites). The per-connection event buffer

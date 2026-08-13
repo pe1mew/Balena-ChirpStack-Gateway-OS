@@ -6,10 +6,10 @@
 
 FROM alpine:3.20 AS fetch
 
-ARG MQTT_FWD_VERSION=4.6.0
+ARG MQTT_FWD_VERSION=4.6.1
 ARG ARTIFACT_ARCH=armv7hf
 ARG BASE_URL=https://artifacts.chirpstack.io/downloads/chirpstack-mqtt-forwarder
-ARG SHA256_MQTT_FWD=d8a9884eacc9c50a7e3d758975d7e99c6bb42257677c7bab7dd4b2d7cdb79a1b
+ARG SHA256_MQTT_FWD=e7d3041084e30e1fe89117f0ce0db6f5f626324562bfffd76a2257f8a473eb52
 
 WORKDIR /fetch
 RUN mkdir -p /out \

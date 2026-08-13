@@ -6,10 +6,10 @@
 
 FROM alpine:3.20 AS fetch
 
-ARG MESH_VERSION=4.1.3
+ARG MESH_VERSION=4.1.4
 ARG ARTIFACT_ARCH=armv7hf
 ARG BASE_URL=https://artifacts.chirpstack.io/downloads/chirpstack-gateway-mesh
-ARG SHA256_MESH=46b2def8f457c12352120efe05e4b05264d665dcafb2ee2edb175d0c9ca46ec5
+ARG SHA256_MESH=b66b18f3ba88ae1fff6c86b474ad57d42607c6c580ce242c588d068d760b3ae6
 
 WORKDIR /fetch
 RUN mkdir -p /out \
