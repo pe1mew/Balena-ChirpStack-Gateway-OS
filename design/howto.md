@@ -250,6 +250,25 @@ a `key info` line whose hotspot name should match the Helium explorer. Make
 sure the original miner is permanently off before going live — two radios on
 one identity invalidate each other's sessions.
 
+**Reading the active identity on a running gateway** (e.g. when the cloud
+log window has rotated past the startup lines): from the host OS shell
+(`balena ssh <uuid>`):
+
+```
+balena-engine exec $(balena-engine ps -qf name=helium-gateway) \
+  sh -c 'GW_KEYPAIR=/data/helium/keypair.bin helium_gateway -c /opt/app/settings.toml key info'
+```
+
+Two non-obvious parts: `helium_gateway` refuses **any** subcommand without
+a full config, so the `-c /opt/app/settings.toml` (the config baked into
+the image) is required even for `key info`; and the entrypoint's
+`GW_KEYPAIR` export lives only in the service's own process, so an
+`exec`'d shell must set it again. The keypair file itself sits in the
+`helium-data` volume (`/var/lib/docker/volumes/*_helium-data/_data/` on
+the host) — though the `HELIUM_SWARM_KEY` variable already serves as its
+canonical backup, since the entrypoint rewrites the file from it on every
+start.
+
 PoC beaconing is disabled by default (`GW_POC_DISABLE=true` set by the
 entrypoint) — Helium PoC beaconing is sunset. This stops beacon
 transmissions and witness reports; note that gateway-rs v1.3.0 still runs
