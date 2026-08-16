@@ -32,6 +32,7 @@ KEEP_ALIVE_DEFAULT="${TTN_KEEP_ALIVE:-20s}"
 RECONNECT_MAX_DEFAULT="${TTN_RECONNECT_MAX:-5m}"
 QUEUE_SIZE_DEFAULT="${TTN_QUEUE_SIZE:-100}"
 EVENT_MAX_AGE_DEFAULT="${TTN_EVENT_MAX_AGE:-5m}"
+LIVENESS_TIMEOUT_DEFAULT="${TTN_LIVENESS_TIMEOUT:-5m}"
 
 # ---- frequency plan: explicit override, else derived from CHANNEL_PLAN -----
 if [ -z "${TTN_FREQUENCY_PLAN:-}" ]; then
@@ -73,6 +74,7 @@ for n in 0 1 2 3; do
   eval "reconnect=\${TTN_RECONNECT_MAX_${n}:-$RECONNECT_MAX_DEFAULT}"
   eval "queue_size=\${TTN_QUEUE_SIZE_${n}:-$QUEUE_SIZE_DEFAULT}"
   eval "event_max_age=\${TTN_EVENT_MAX_AGE_${n}:-$EVENT_MAX_AGE_DEFAULT}"
+  eval "liveness=\${TTN_LIVENESS_TIMEOUT_${n}:-$LIVENESS_TIMEOUT_DEFAULT}"
   if [ "$n" = "0" ]; then
     # unsuffixed aliases fill slot 0 when the suffixed variables are unset
     gw_id="${gw_id:-${TTN_GATEWAY_ID:-}}"
@@ -102,7 +104,7 @@ for n in 0 1 2 3; do
       ca_file="/etc/ssl/certs/ca-certificates.crt"
     fi
   fi
-  BLOCKS="$BLOCKS${nl}[[ttn]]${nl}  name = \"$name\"${nl}  server = \"$server\"${nl}  gateway_id = \"$gw_id\"${nl}  gateway_key = \"$gw_key\"${nl}  downlink_enabled = $downlink${nl}  keep_alive_interval = \"$keep_alive\"${nl}  reconnect_interval_max = \"$reconnect\"${nl}  queue_size = $queue_size${nl}  event_max_age = \"$event_max_age\"${nl}  tls_enabled = $tls${nl}  ca_cert = \"$ca_file\""
+  BLOCKS="$BLOCKS${nl}[[ttn]]${nl}  name = \"$name\"${nl}  server = \"$server\"${nl}  gateway_id = \"$gw_id\"${nl}  gateway_key = \"$gw_key\"${nl}  downlink_enabled = $downlink${nl}  keep_alive_interval = \"$keep_alive\"${nl}  reconnect_interval_max = \"$reconnect\"${nl}  queue_size = $queue_size${nl}  event_max_age = \"$event_max_age\"${nl}  liveness_timeout = \"$liveness\"${nl}  tls_enabled = $tls${nl}  ca_cert = \"$ca_file\""
   COUNT=$((COUNT + 1))
   log "connection slot $n: name=$name server=$server gateway_id=$gw_id downlink=$downlink tls=$tls"
 done

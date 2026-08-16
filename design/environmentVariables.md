@@ -125,6 +125,7 @@ Per connection (`n` = `0`–`3`):
 | `TTN_GATEWAY_KEY_n` | **required per slot** | gateway key / API key (MQTT password; use a device variable) |
 | `TTN_SERVER_n` | `eu1.cloud.thethings.network:1881` | protobuf-MQTT endpoint, `host:port` (TLS: port `8881` + TLS flag) |
 | `TTN_CONNECTION_ENABLED_n` | `true` when ID set | disable a slot without deleting its variables |
+| `TTN_LIVENESS_TIMEOUT(_n)` | `5m` | liveness watchdog: if nothing is received on the connection AND no errors occur for this long (half-open connection, e.g. 4G NAT state loss), force a reconnect; if that revives nothing, restart the service. `0s` disables. Real outages (active reconnect loop) do not trigger it |
 | `TTN_NAME_n` | `connN` | connection name shown in the logs |
 | `TTN_DOWNLINK_ENABLED_n` | `true` | subscribe to and transmit downlinks on this connection |
 | `TTN_TLS_ENABLED_n` | `false` | TLS to this endpoint; system CA bundle unless a CA is supplied |

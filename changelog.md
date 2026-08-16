@@ -14,7 +14,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
   opaque `0.0.0+revN`, consistent across fleets for identical source. Bump
   the version together with the changelog when cutting a release.
 
+**Fixed**
+- Release **1.1.0 accidentally shipped ttn-forwarder v0.2.1** instead of
+  v0.3.0: a stale submodule checkout was committed along with an Aug 6
+  changelog commit, silently reverting the pointer (the classic submodule
+  footgun — `git checkout main` inside the submodule landed on a local
+  branch that was behind its origin). This dropped the lossy-backhaul
+  resilience from all fleets for one release. Restored, and superseded by
+  v0.3.1 below.
+
 **Changed**
+- ttn-forwarder updated to chirpstack-ttn-mqtt-forwarder **v0.3.1**:
+  per-connection **liveness watchdog** (`TTN_LIVENESS_TIMEOUT(_n)`,
+  default `5m`, `0s` disables). Diagnosed from a production incident on a
+  4G gateway: the TTN connection wedged half-open overnight — silent and
+  error-free, so neither keep-alive nor the reconnect path ever fired —
+  and only a manual service restart recovered it. The watchdog detects
+  the silent-and-error-free state and escalates: forced reconnect first,
+  then process exit (supervisor restart) if the connection stays dead.
+  Genuine outages keep producing reconnect errors and never trigger it,
+  so the v0.3.0 outage behavior (in-process event queue) is preserved.
 - gateway-mesh updated to upstream **v4.1.4** and mqtt-forwarder to
   **v4.6.1** (version + SHA-256 pins updated for armv7hf; arm64 hashes in
   the howto): the first releases containing the upstream fixes for the
