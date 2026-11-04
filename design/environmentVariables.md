@@ -230,6 +230,13 @@ forwarder recipe of your choice from above):
   `CONC_CHIPSET=sx1301`, `CONC_MODEL=rak_2245` (no dedicated RAK831 profile;
   same SX1301 front-end, reset default GPIO17 = physical pin 11). EUI is
   MAC-derived automatically.
+- **RAK2245 HAT on Pi 3B+** (verified): `CONC_CHIPSET=sx1301`,
+  `CONC_MODEL=rak_2245` — the HAT wires reset to GPIO17, which is the
+  profile default, so **no `CONC_RESET_PIN` override**. EUI is MAC-derived
+  automatically. Caution: a cased unit is easily mistaken for an
+  iC880A-on-backplane build; configuring it as `imst_ic880a` leaves the
+  reset pointing at an unconnected pin (works until the chip first *needs*
+  a reset — see the howto troubleshooting table).
 - **IMST iC880A on Pi 3B+**: `CONC_CHIPSET=sx1301`,
   `CONC_MODEL=imst_ic880a`, `CONC_RESET_PIN` per backplane — `17` for
   pin-11/ch2i wiring (verified), `25` for Gonzalo Casas/Coredump, profile
